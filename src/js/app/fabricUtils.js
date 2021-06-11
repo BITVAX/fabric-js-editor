@@ -258,6 +258,10 @@ function deleteSelected() {
   }
 }
 
+function insertImage(){
+
+}
+
 function insertSvg(url, loader) {
   loader.removeClass("noshow");
   fabric.loadSVGFromURL(url, function(objects, options) {
@@ -490,6 +494,7 @@ UtilsModule.prototype.exportFile = exportFile;
 UtilsModule.prototype.getImageBounds = getImageBounds;
 UtilsModule.prototype.deleteSelected = deleteSelected;
 UtilsModule.prototype.insertSvg = insertSvg;
+UtilsModule.prototype.insertImage = insertImage;
 UtilsModule.prototype.sendToFront = sendToFront;
 UtilsModule.prototype.sendToBack = sendToBack;
 UtilsModule.prototype.sendBackward = sendBackward;
