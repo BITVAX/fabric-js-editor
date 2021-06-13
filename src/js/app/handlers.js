@@ -555,17 +555,16 @@ function listeners() {
                         top: 0,
                         angle: 0
                     });
-                    /*
-                                if (template!=null){
-                                  imgInstance.globalCompositeOperation = 'source-atop';
-                                }
-                    */
+                    if (global.template !== null){
+                      imgInstance.globalCompositeOperation = 'source-atop';
+                    }
                     canvas.add(imgInstance);
                     // renderLayers();
                 }
             });
             img.attr('src', oFREvent.target.result);
-        }
+        };
+
     });
 
     $("#toolbar-image").on("click", function () {
@@ -783,7 +782,28 @@ function HandlersModule() {
         } catch (err) {
             $("#loading-spinner").addClass("noshow");
         }
-    } else {
+    }
+    var templateFile = getUrlParameter('template');
+    if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
+        try {
+            fabric.Image.fromURL('/images/templates/' + templateFile, function (objects, options) {
+                global.template = objects;
+                global.template.set({
+                    left: 0,
+                    top: 0,
+                    scaleY: canvas.height / global.template.height,
+                    scaleX: canvas.width / global.template.width,
+                    selectable: false
+                });
+                canvas.add(global.template);
+                $("#loading-spinner").addClass("noshow");
+            });
+        } catch (err) {
+            $("#loading-spinner").addClass("noshow");
+        }
+    }
+
+    if (!(logoFile !== null && logoFile !== undefined && logoFile !== "")) {
         try {
             canvas.clear();
             //canvas.loadFromJSON(sampleImage); -- use this to load a default image

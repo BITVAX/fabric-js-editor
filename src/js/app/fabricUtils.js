@@ -385,7 +385,7 @@ function setFont(font) {
 
 function setShadow(_color, _blur, _offsetX, _offsetY, object) {
   object = object || canvas.getActiveObject();
-  object.setShadow({
+  object.set('shadow',{
       color: _color,
       blur: _blur,
       offsetX: _offsetX,
@@ -408,7 +408,7 @@ function changeShadowColor(color, object) {
 
 function clearShadow(object) {
   object = object || canvas.getActiveObject();
-  object.setShadow(null);
+  object.set('shadow',null);
   canvas.renderAll();
 
   // Push the canvas state to history

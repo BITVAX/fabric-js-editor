@@ -12,7 +12,9 @@ function disableDraw() {
 
   canvas.selection = true;
   canvas.forEachObject(function(o) {
-    o.selectable = true;
+    if (global.template === null || o!=global.template ) {
+      o.selectable = true;
+    }
   });
 }
 
