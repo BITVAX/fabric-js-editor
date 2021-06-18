@@ -69,7 +69,9 @@ function drawObj(objType) {
         fill: 'yellow'
       });
     }
-
+    if(global.template !== null){
+      drawnObj.globalCompositeOperation='source-atop';
+    }
     canvas.add(drawnObj);
   });
 
