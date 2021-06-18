@@ -693,15 +693,15 @@ function setShadow() {
 }
 
 function rescale_canvas_if_needed() {
-    var optimal_dimensions = [global.template.width, global.template.height];
+    var optimal_dimensions = global.optimal;
     var scaleFactorX = ($("#content").width() - 100) / optimal_dimensions[0];
     var scaleFactorY = $("#content").height()  / optimal_dimensions[1];
     var scale=1.0;
-    if (scaleFactorX < scaleFactorY && scaleFactorX < 1) {
+    if (scaleFactorX < scaleFactorY /*&& scaleFactorX < 1*/) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorX);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorX);
         canvas.setZoom(scaleFactorX);
-    } else if (scaleFactorX > scaleFactorY && scaleFactorY < 1) {
+    } else if (scaleFactorX > scaleFactorY /*&& scaleFactorY < 1*/) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorY);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorY);
         canvas.setZoom(scaleFactorY);
@@ -714,12 +714,13 @@ function rescale_canvas_if_needed() {
     global.template.set({
         left: 0,
         top: 0,
-        scaleY: canvas.height / global.template.height,
-        scaleX: canvas.width / global.template.width,
+        scaleY: canvas.height / optimal_dimensions[1],
+        scaleX: canvas.width / optimal_dimensions[0],
         selectable: false
     });
     canvas.remove(global.template);
     canvas.add(global.template);
+    canvas.sendToBack(global.template);
     canvas.calcOffset();
     canvas.renderAll();
 }
@@ -828,6 +829,7 @@ function HandlersModule() {
         try {
             fabric.Image.fromURL('/images/templates/' + templateFile, function (objects, options) {
                 global.template = objects;
+                global.optimal = [global.template.width, global.template.height];
                 $("#loading-spinner").addClass("noshow");
             });
         } catch (err) {
