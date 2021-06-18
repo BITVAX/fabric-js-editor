@@ -692,12 +692,48 @@ function setShadow() {
     }
 }
 
+function rescale_canvas_if_needed() {
+    var optimal_dimensions = [global.template.width, global.template.height];
+    var scaleFactorX = ($("#content").width() - 100) / optimal_dimensions[0];
+    var scaleFactorY = $("#content").height()  / optimal_dimensions[1];
+    var scale=1.0;
+    if (scaleFactorX < scaleFactorY && scaleFactorX < 1) {
+        canvas.setWidth(optimal_dimensions[0] * scaleFactorX);
+        canvas.setHeight(optimal_dimensions[1] * scaleFactorX);
+        canvas.setZoom(scaleFactorX);
+    } else if (scaleFactorX > scaleFactorY && scaleFactorY < 1) {
+        canvas.setWidth(optimal_dimensions[0] * scaleFactorY);
+        canvas.setHeight(optimal_dimensions[1] * scaleFactorY);
+        canvas.setZoom(scaleFactorY);
+    } else {
+        canvas.setWidth(optimal_dimensions[0]);
+        canvas.setHeight(optimal_dimensions[1]);
+        canvas.setZoom(1);
+    }
+    $("#canvas-container").css({left: "50px", top: "40px", width: canvas.getWidth()});
+    global.template.set({
+        left: 0,
+        top: 0,
+        scaleY: canvas.height / global.template.height,
+        scaleX: canvas.width / global.template.width,
+        selectable: false
+    });
+    canvas.remove(global.template);
+    canvas.add(global.template);
+    canvas.calcOffset();
+    canvas.renderAll();
+}
+
 function resizeHandler() {
-    // Resize the canvas size
-    var width = $("#content").width() - 100;
-    canvas.setWidth(width);
-    $("#canvas-container").css({left: "50px", top: "40px", width: width});
-    canvas.setHeight(window.innerHeight - $("#toolbar").height() - 150);
+    if (global.template!==null){
+        rescale_canvas_if_needed();
+    }else{
+        // Resize the canvas size
+        var width = $("#content").width() - 100;
+        canvas.setWidth(width);
+        $("#canvas-container").css({left: "50px", top: "40px", width: width});
+        canvas.setHeight(window.innerHeight - $("#toolbar").height() - 150);
+    }
 
     // Resize the search results panel
     page.fitArtworkResultsHeight();
@@ -738,6 +774,7 @@ function popupCenter(url, title, w, h) {
 }
 
 /* ----- exports ----- */
+var resizeId = null;
 
 function HandlersModule() {
     if (!(this instanceof HandlersModule)) return new HandlersModule();
@@ -747,9 +784,12 @@ function HandlersModule() {
 
     // Initialize canvas
     fabric.Object.prototype.transparentCorners = false;
-    window.addEventListener('resize', resizeHandler, false);
-    resizeHandler();
-
+    window.addEventListener('resize', function () {
+        if (resizeId != null)
+            clearTimeout(resizeId);
+        resizeId = setTimeout(resizeHandler, 500);
+    }, false);
+    resizeId = setTimeout(resizeHandler, 500);
     // Change fabric.js selection styles
     fabric.Object.prototype.set({
         borderColor: "#1c55d5",
@@ -788,14 +828,6 @@ function HandlersModule() {
         try {
             fabric.Image.fromURL('/images/templates/' + templateFile, function (objects, options) {
                 global.template = objects;
-                global.template.set({
-                    left: 0,
-                    top: 0,
-                    scaleY: canvas.height / global.template.height,
-                    scaleX: canvas.width / global.template.width,
-                    selectable: false
-                });
-                canvas.add(global.template);
                 $("#loading-spinner").addClass("noshow");
             });
         } catch (err) {
