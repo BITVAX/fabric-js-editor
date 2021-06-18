@@ -697,11 +697,11 @@ function rescale_canvas_if_needed() {
     var scaleFactorX = ($("#content").width() - 100) / optimal_dimensions[0];
     var scaleFactorY = $("#content").height()  / optimal_dimensions[1];
     var scale=1.0;
-    if (scaleFactorX < scaleFactorY /*&& scaleFactorX < 1*/) {
+    if (scaleFactorX < scaleFactorY && scaleFactorX < 1) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorX);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorX);
         canvas.setZoom(scaleFactorX);
-    } else if (scaleFactorX > scaleFactorY /*&& scaleFactorY < 1*/) {
+    } else if (scaleFactorX > scaleFactorY && scaleFactorY < 1) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorY);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorY);
         canvas.setZoom(scaleFactorY);
