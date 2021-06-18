@@ -41,7 +41,9 @@ function insertText() {
     });
 
     text.targetFindTolerance = 4;
-
+    if (global.template!=null){
+      text.globalCompositeOperation = 'source-atop';
+    }
     canvas.add(text);
     canvas.setActiveObject(text);
     canvas.defaultCursor = 'auto';
