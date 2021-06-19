@@ -692,16 +692,24 @@ function setShadow() {
     }
 }
 
-function rescale_canvas_if_needed() {
+function rescale_canvas_if_needed(height , width ) {
     var optimal_dimensions = global.optimal;
-    var scaleFactorX = ($("#content").width() - 100) / optimal_dimensions[0];
-    var scaleFactorY = $("#content").height()  / optimal_dimensions[1];
-    var scale=1.0;
+    var scaleFactorX = width / optimal_dimensions[0];
+    var scaleFactorY = height / optimal_dimensions[1];
+    var scale = 1.0;
     if (scaleFactorX < scaleFactorY && scaleFactorX < 1) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorX);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorX);
         canvas.setZoom(scaleFactorX);
     } else if (scaleFactorX > scaleFactorY && scaleFactorY < 1) {
+        canvas.setWidth(optimal_dimensions[0] * scaleFactorY);
+        canvas.setHeight(optimal_dimensions[1] * scaleFactorY);
+        canvas.setZoom(scaleFactorY);
+    } else if (scaleFactorX < scaleFactorY) {
+        canvas.setWidth(optimal_dimensions[0] * scaleFactorX);
+        canvas.setHeight(optimal_dimensions[1] * scaleFactorX);
+        canvas.setZoom(scaleFactorX);
+    } else if (scaleFactorX > scaleFactorY) {
         canvas.setWidth(optimal_dimensions[0] * scaleFactorY);
         canvas.setHeight(optimal_dimensions[1] * scaleFactorY);
         canvas.setZoom(scaleFactorY);
@@ -711,23 +719,13 @@ function rescale_canvas_if_needed() {
         canvas.setZoom(1);
     }
     $("#canvas-container").css({left: "50px", top: "40px", width: canvas.getWidth()});
-    global.template.set({
-        left: 0,
-        top: 0,
-        scaleY: canvas.height / optimal_dimensions[1],
-        scaleX: canvas.width / optimal_dimensions[0],
-        selectable: false
-    });
-    canvas.remove(global.template);
-    canvas.add(global.template);
-    canvas.sendToBack(global.template);
     canvas.calcOffset();
     canvas.renderAll();
 }
 
 function resizeHandler() {
     if (global.template!==null){
-        rescale_canvas_if_needed();
+        rescale_canvas_if_needed(window.innerHeight - $("#toolbar").height() - 150, $("#content").width() - 100, $("#content").width() - 100, window.innerHeight - $("#toolbar").height() - 150);
     }else{
         // Resize the canvas size
         var width = $("#content").width() - 100;
@@ -830,6 +828,21 @@ function HandlersModule() {
             fabric.Image.fromURL('/images/templates/' + templateFile, function (objects, options) {
                 global.template = objects;
                 global.optimal = [global.template.width, global.template.height];
+                if (!canvas.contains(global.template)) {
+                    global.template.set({
+                        left: 0,
+                        top: 0,
+/*
+                        height: canvas.height,
+                        width: canvas.width,
+*/
+                        selectable: false
+                    });
+                    // canvas.remove(global.template);
+                    canvas.add(global.template);
+                    canvas.sendToBack(global.template);
+                }
+
                 $("#loading-spinner").addClass("noshow");
             });
         } catch (err) {
