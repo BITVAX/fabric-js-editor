@@ -825,7 +825,7 @@ function HandlersModule() {
     var templateFile = getUrlParameter('template');
     if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
         try {
-            fabric.Image.fromURL('/images/templates/' + templateFile, function (objects, options) {
+            fabric.Image.fromURL('images/templates/' + templateFile, function (objects, options) {
                 global.template = objects;
                 global.optimal = [global.template.width, global.template.height];
                 if (!canvas.contains(global.template)) {

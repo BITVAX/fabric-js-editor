@@ -31,6 +31,9 @@ function sendBackward() {
   var activeObject = canvas.getActiveObject();
   if (activeObject) {
     canvas.sendBackwards(activeObject);
+    if (global.template !== null){
+      canvas.sendToBack(global.template);
+    }
     // Push the canvas state to history
     canvas.trigger("object:statechange");
   }
@@ -49,6 +52,9 @@ function sendToBack() {
   var activeObject = canvas.getActiveObject();
   if (activeObject) {
     canvas.sendToBack(activeObject);
+    if (global.template !== null){
+      canvas.sendToBack(global.template);
+    }
     // Push the canvas state to history
     canvas.trigger("object:statechange");
   }
