@@ -398,7 +398,20 @@ function listeners() {
     });
 
     $("#download-button").on("click", function () {
-        toggle($("#sidebar-export"));
+        if (parent !== undefined){
+            var url = canvas.toDataURL({
+                format: 'png',
+                left: 0,
+                top: 0,
+                width: global.optimal[0],
+                height: global.optimal[1]
+            });
+            $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
+            $('#png_text',parent.document).val(url);
+            if (parent.oDlgCustomization)
+                parent.oDlgCustomization.dialog("close");
+        }
+        // toggle($("#sidebar-export"));
         return false;
     });
 
@@ -497,7 +510,6 @@ function listeners() {
         var term = $("#artwork-search").val().trim();
         var resultsDiv = $("#artwork-panel > .search-results");
 
-        var isClipart = $("input[name=search-type]:checked").val() === "clipart";
         fetchApi.search(term,
             page.toggleArtworkSearchSpinner,
             page.toggleArtworkNoResults,
@@ -506,7 +518,7 @@ function listeners() {
                 utils.insertSvg(url, $("#loading-spinner"));
                 page.closePanel(null, true);
             },
-            isClipart);
+            $("input[name=search-type]:checked").val());
     });
 
     $("#search-submit").on("click", function () {

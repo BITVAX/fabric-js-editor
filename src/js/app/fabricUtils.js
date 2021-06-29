@@ -286,7 +286,9 @@ function insertSvg(url, loader) {
       scaleY: scaleFactor,
       scaleX: scaleFactor
     });
-
+    if (global.template !== null) {
+      obj.globalCompositeOperation = 'source-atop';
+    }
     canvas.add(obj);
     obj.perPixelTargetFind = true;
     obj.targetFindTolerance = 4;

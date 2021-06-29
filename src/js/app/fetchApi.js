@@ -78,6 +78,56 @@ function queryClipartApi(page, numResults, callback) {
   outstandingQueries.push(xhr);
 }
 
+function queryBitvaxApi(page, numResults, callback) {
+  var endpoint = "/en/artwork";
+
+  if (cachedResults === null) {
+    var xhr = $.ajax({
+      url: endpoint,
+      data: {
+        t: keyword
+      },
+      success: function(response) {
+        var get_icons = (categories) => {
+          var res = [];
+          for (var categoriesKey in categories) {
+            var category=categories[categoriesKey];
+            if (category.products.length > 0)  res=[].concat(res,
+                category.products.map((x) => {x.category= {'name':category.name,'id':category.id}; return x;}));
+            if (category.categories.length > 0) res=[].concat(res,get_icons(category.categories));
+          }
+          return res;
+        };
+        var icons = get_icons(response);
+        var totalResults = icons.length;
+        var payload = [];
+        for (var i = 0; i < totalResults; i++) {
+          var thisId = icons[i]['id'];
+          // var folder = parseInt(thisId/1000);
+          payload.push({
+            id: thisId,
+            title: icons[i]['name'],
+            uploader: icons[i]['category']['name'],
+            uploader_url: icons[i][3],
+            svg: {
+              url: icons[i]['image'].replace(".jpg",".svg"),
+              png_thumb: icons[i]['thumbnail']
+            }
+          });
+        }
+        cachedResults = payload;
+        var thisPage = payload.slice(0, numResults);
+        callback(thisPage, thisPage.length, Math.ceil(payload.length/numResults), page, true);
+      }
+    });
+    outstandingQueries.push(xhr);
+  } else {
+    var thisPage = cachedResults.slice((page-1)*numResults,((page-1)*numResults)+numResults);
+    var allPages = Math.ceil(cachedResults.length/numResults);
+    callback(thisPage, thisPage.length, allPages, page, true);
+  }
+}
+
 function loadMore(_nouns) {
   if (currentPage === numPages) {
     return;
@@ -192,6 +242,10 @@ function parseResults(results, _numResults, _numPages, _currentPage, _nouns) {
   }
 }
 
+function parseResultsBitvax(results) {
+
+}
+
 function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _actionHandler, _clipart) {
   keyword = _keyword.trim();
   if (keyword === "") {
@@ -220,9 +274,11 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
   toggleSpinner(true);
   pageSize = Math.ceil((window.innerHeight - 50) / 100) * 3;
 
-  if (_clipart === true) {
+  if (_clipart === 'clipart') {
     queryClipartApi(1, pageSize, parseResults);
-  } else {
+  }else if (_clipart === 'Bitvax'){
+    queryBitvaxApi(1, pageSize, parseResults);
+  }else {
     cachedResults = null;
     queryNounApi(1, pageSize, parseResults);
   }
@@ -236,5 +292,6 @@ function FetchApiModule() {
 }
 
 FetchApiModule.prototype.search = search;
+FetchApiModule.prototype.queryBitvaxApi = queryBitvaxApi;
 
 module.exports = FetchApiModule;
