@@ -553,103 +553,107 @@ function listeners() {
         var file = $('#toolbar-image-input').get(0).files[0];
         oFReader.readAsDataURL(file);
         oFReader.onload = function (oFREvent) {
-            var img = $('<img />', {
-                id: file.name /*+ '-' + randomString(4)*/,
-            });
-            img.appendTo($('#images'));
-            img.on('load', function () {
-                //imgElement.width = 300;
-                if (this.complete) {
-                    var imgInstance = new fabric.Image(this, {
-                        scaleX: 1,
-                        scaleY: 1,
-                        left: 0,
-                        top: 0,
-                        angle: 0
-                    });
-                    if (global.template !== null){
-                      imgInstance.globalCompositeOperation = 'source-atop';
+            if (oFREvent.total > 1024*1024*10){
+                alert('Imagen demasiado grande');
+            }else {
+                var img = $('<img />', {
+                    id: file.name /*+ '-' + randomString(4)*/,
+                });
+                img.appendTo($('#images'));
+                img.on('load', function () {
+                    //imgElement.width = 300;
+                    if (this.complete) {
+                        var imgInstance = new fabric.Image(this, {
+                            scaleX: 1,
+                            scaleY: 1,
+                            left: 0,
+                            top: 0,
+                            angle: 0
+                        });
+                        if (global.template !== null) {
+                            imgInstance.globalCompositeOperation = 'source-atop';
+                        }
+                        canvas.add(imgInstance);
+                        // renderLayers();
                     }
-                    canvas.add(imgInstance);
-                    // renderLayers();
-                }
-            });
-            img.attr('src', oFREvent.target.result);
+                });
+                img.attr('src', oFREvent.target.result);
+            }
         };
 
     });
 
     $("#toolbar-image").on("click", function () {
-    $('#toolbar-image-input').trigger('click');
-});
+        $('#toolbar-image-input').trigger('click');
+    });
 
-$("#toolbar-send-back").on("click", function () {
-    utils.sendToBack();
-});
+    $("#toolbar-send-back").on("click", function () {
+        utils.sendToBack();
+    });
 
-$("#toolbar-send-backward").on("click", function () {
-    utils.sendBackward();
-});
+    $("#toolbar-send-backward").on("click", function () {
+        utils.sendBackward();
+    });
 
-$("#toolbar-bring-forward").on("click", function () {
-    utils.sendForward();
-});
+    $("#toolbar-bring-forward").on("click", function () {
+        utils.sendForward();
+    });
 
-$("#toolbar-bring-front").on("click", function () {
-    utils.sendToFront();
-});
+    $("#toolbar-bring-front").on("click", function () {
+        utils.sendToFront();
+    });
 
-$("#shadow-switch").on("change", function () {
-    if ($(this).is(":checked")) {
-        $("#glow-switch-label")[0].MaterialSwitch.off();
-        $("#shadow-options").slideToggle(200);
+    $("#shadow-switch").on("change", function () {
+        if ($(this).is(":checked")) {
+            $("#glow-switch-label")[0].MaterialSwitch.off();
+            $("#shadow-options").slideToggle(200);
 
-        // Close other options
-        if ($("#glow-options").css("display") !== "none") {
-            $("#glow-options").slideToggle(200);
-        }
+            // Close other options
+            if ($("#glow-options").css("display") !== "none") {
+                $("#glow-options").slideToggle(200);
+            }
 
-        setShadow();
+            setShadow();
 
-        var shadowColor = utils.getShadowColor();
-        $("#shadow-color-hex").val(shadowColor);
-    } else {
-        utils.clearShadow();
-        $("#shadow-options").slideToggle(200);
-    }
-});
-
-$("#glow-switch").on("change", function () {
-    if ($(this).is(":checked")) {
-        $("#shadow-switch-label")[0].MaterialSwitch.off();
-        $("#glow-options").slideToggle(200);
-
-        // Close other options
-        if ($("#shadow-options").css("display") !== "none") {
+            var shadowColor = utils.getShadowColor();
+            $("#shadow-color-hex").val(shadowColor);
+        } else {
+            utils.clearShadow();
             $("#shadow-options").slideToggle(200);
         }
+    });
 
+    $("#glow-switch").on("change", function () {
+        if ($(this).is(":checked")) {
+            $("#shadow-switch-label")[0].MaterialSwitch.off();
+            $("#glow-options").slideToggle(200);
+
+            // Close other options
+            if ($("#shadow-options").css("display") !== "none") {
+                $("#shadow-options").slideToggle(200);
+            }
+
+            setShadow();
+
+            var shadowColor = utils.getShadowColor();
+            $("#glow-color-hex").val(shadowColor);
+        } else {
+            utils.clearShadow();
+            $("#glow-options").slideToggle(200);
+        }
+    });
+
+    $("#shadow-blur-slider").on("change", function () {
         setShadow();
+    });
 
-        var shadowColor = utils.getShadowColor();
-        $("#glow-color-hex").val(shadowColor);
-    } else {
-        utils.clearShadow();
-        $("#glow-options").slideToggle(200);
-    }
-});
+    $("#shadow-offset-slider").on("change", function () {
+        setShadow();
+    });
 
-$("#shadow-blur-slider").on("change", function () {
-    setShadow();
-});
-
-$("#shadow-offset-slider").on("change", function () {
-    setShadow();
-});
-
-$("#glow-size-slider").on("change", function () {
-    setShadow();
-});
+    $("#glow-size-slider").on("change", function () {
+        setShadow();
+    });
 }
 
 function setCurrentShadowValues() {
