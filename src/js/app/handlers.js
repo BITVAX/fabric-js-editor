@@ -554,7 +554,7 @@ function listeners() {
         oFReader.readAsDataURL(file);
         oFReader.onload = function (oFREvent) {
             if (oFREvent.total > 1024*1024*10){
-                alert('Imagen demasiado grande');
+                window.alert('Imagen demasiado grande');
             }else {
                 var img = $('<img />', {
                     id: file.name /*+ '-' + randomString(4)*/,
