@@ -88,12 +88,12 @@ function queryBitvaxApi(page, numResults, callback) {
         t: keyword
       },
       success: function(response) {
-        var get_icons = (categories) => {
+        var get_icons = function(categories){
           var res = [];
           for (var categoriesKey in categories) {
             var category=categories[categoriesKey];
             if (category.products.length > 0)  res=[].concat(res,
-                category.products.map((x) => {x.category= {'name':category.name,'id':category.id}; return x;}));
+                category.products.map(function(x){x.category= {'name':category.name,'id':category.id}; return x;}));
             if (category.categories.length > 0) res=[].concat(res,get_icons(category.categories));
           }
           return res;

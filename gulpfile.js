@@ -77,7 +77,7 @@ gulp.task('x-browserify', function() {
     .on("error", errorHandler)
     .pipe(source('bundle.js'))
     .pipe(buffer())
-    .pipe(gulpif(!isDebug, uglify()))
+    .pipe(gulpif(!isDebug, uglify().on('error', console.log)))
     .pipe(gulp.dest('build/js'));
 });
 
