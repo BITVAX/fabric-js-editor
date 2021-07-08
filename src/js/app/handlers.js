@@ -403,8 +403,10 @@ function listeners() {
                 format: 'png',
                 left: 0,
                 top: 0,
-                width: global.optimal[0],
-                height: global.optimal[1]
+                // width: global.optimal[0],
+                // height: global.optimal[1]
+                width: canvas.width,
+                height: canvas.height
             });
             $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
             $('#png_text',parent.document).val(url);
