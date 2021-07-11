@@ -203,7 +203,7 @@ function handleOutlineColorChangeEvent(color) {
 
   var hex = color;
   if (typeof(hex) === "object") {
-    hex = color.toHexString();
+    hex = color.toRgbString();
   }
 
   if (hex === utils.getOutlineColor()) {
@@ -222,6 +222,7 @@ function outlineColorPicker() {
     showInput: true,
     color: 'white',
     showButtons: false,
+    showAlpha: true,
     clickoutFiresChange: false,
     show: function(color) {
       changedOutlineColor = false;
