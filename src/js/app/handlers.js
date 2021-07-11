@@ -599,8 +599,10 @@ function listeners() {
         }
     });
     canvas.on('path:created',function(opt){
-        opt.path.globalCompositeOperation = 'source-atop';
-        canvas.renderAll();
+        if (global.template !== null) {
+            opt.path.globalCompositeOperation = 'source-atop';
+            canvas.renderAll();
+        }
     });
 
     $("#toolbar-send-back").on("click", function () {
