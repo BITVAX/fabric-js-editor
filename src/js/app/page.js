@@ -139,7 +139,7 @@ function handleFillColorChangeEvent(color) {
 
   var hex = color;
   if (typeof(hex) === "object") {
-    hex = color.toHexString();
+    hex = color.toRgbString();
   }
 
   if (hex === utils.getFillColor()) {
@@ -158,6 +158,7 @@ function fillColorPicker() {
     showInput: true,
     color: 'white',
     showButtons: false,
+    showAlpha: true,
     clickoutFiresChange: false,
     show: function(color) {
       changedFillColor = false;

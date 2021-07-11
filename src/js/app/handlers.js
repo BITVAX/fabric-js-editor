@@ -589,6 +589,20 @@ function listeners() {
         $('#toolbar-image-input').trigger('click');
     });
 
+    $("#toolbar-draw").on('click', function(){
+        if (canvas.isDrawingMode){
+            $(this).removeClass("toolbar-item-active");
+            canvas.isDrawingMode=false;
+        }else{
+            $(this).addClass("toolbar-item-active");
+            canvas.isDrawingMode=true;
+        }
+    });
+    canvas.on('path:created',function(opt){
+        opt.path.globalCompositeOperation = 'source-atop';
+        canvas.renderAll();
+    });
+
     $("#toolbar-send-back").on("click", function () {
         utils.sendToBack();
     });
