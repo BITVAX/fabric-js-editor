@@ -20,7 +20,7 @@ function selectAll() {
 
 function sendForward() {
   var activeObject = canvas.getActiveObject();
-  if (activeObject) {
+  if (activeObject && activeObject.selectable) {
     canvas.bringForward(activeObject);
     // Push the canvas state to history
     canvas.trigger("object:statechange");
@@ -29,7 +29,7 @@ function sendForward() {
 
 function sendBackward() {
   var activeObject = canvas.getActiveObject();
-  if (activeObject) {
+  if (activeObject && activeObject.selectable) {
     canvas.sendBackwards(activeObject);
     if (global.template !== null){
       canvas.sendToBack(global.template);
@@ -41,7 +41,7 @@ function sendBackward() {
 
 function sendToFront() {
   var activeObject = canvas.getActiveObject();
-  if (activeObject) {
+  if (activeObject && activeObject.selectable) {
     canvas.bringToFront(activeObject);
     // Push the canvas state to history
     canvas.trigger("object:statechange");
@@ -50,7 +50,7 @@ function sendToFront() {
 
 function sendToBack() {
   var activeObject = canvas.getActiveObject();
-  if (activeObject) {
+  if (activeObject && activeObject.selectable) {
     canvas.sendToBack(activeObject);
     if (global.template !== null){
       canvas.sendToBack(global.template);
@@ -65,33 +65,35 @@ function clone() {
   // may want copy and paste on different moment.
   // and you do not want the changes happened
   // later to reflect on the copy.
-  canvas.getActiveObject().clone(function(cloned) {
-    canvas.discardActiveObject();
-    cloned.set({
-      left: cloned.left + 10,
-      top: cloned.top + 10,
-      evented: true,
-    });
-    if (cloned.type === 'activeSelection') {
-      // active selection needs a reference to the canvas.
-      cloned.canvas = canvas;
-      cloned.forEachObject(function(obj) {
-        canvas.add(obj);
-        obj.perPixelTargetFind = true;
-        obj.targetFindTolerance = 4;
+  var activeObject=canvas.getActiveObject();
+  if (activeObject.selectable) {
+    activeObject.clone(function (cloned) {
+      canvas.discardActiveObject();
+      cloned.set({
+        left: cloned.left + 10,
+        top: cloned.top + 10,
+        evented: true,
       });
-      // this should solve the unselectability
-      cloned.setCoords();
-    } else {
-      canvas.add(cloned);
-      cloned.perPixelTargetFind = true;
-      cloned.targetFindTolerance = 4;
-    }
+      if (cloned.type === 'activeSelection') {
+        // active selection needs a reference to the canvas.
+        cloned.canvas = canvas;
+        cloned.forEachObject(function (obj) {
+          canvas.add(obj);
+          obj.perPixelTargetFind = true;
+          obj.targetFindTolerance = 4;
+        });
+        // this should solve the unselectability
+        cloned.setCoords();
+      } else {
+        canvas.add(cloned);
+        cloned.perPixelTargetFind = true;
+        cloned.targetFindTolerance = 4;
+      }
 
-    canvas.setActiveObject(cloned);
-    canvas.requestRenderAll();
-  });
- 
+      canvas.setActiveObject(cloned);
+      canvas.requestRenderAll();
+    });
+  }
   // Push the canvas state to history
   canvas.trigger("object:statechange");
 }
@@ -259,13 +261,16 @@ function deleteSelected() {
   // Delete the current object(s)
   var activeObjects = canvas.getActiveObjects();
   canvas.discardActiveObject() ;
-  if (activeObjects.length) {
-    canvas.remove.apply(canvas, activeObjects);
+  var selectables=[];
+  activeObjects.map(function (obj){
+    if (obj.selectable){
+      selectables.push(obj);
+    }
+  });
+
+  if (selectables.length) {
+    canvas.remove.apply(canvas, selectables);
   }
-}
-
-function insertImage(){
-
 }
 
 function insertSvg(url, loader) {
@@ -502,7 +507,6 @@ UtilsModule.prototype.exportFile = exportFile;
 UtilsModule.prototype.getImageBounds = getImageBounds;
 UtilsModule.prototype.deleteSelected = deleteSelected;
 UtilsModule.prototype.insertSvg = insertSvg;
-UtilsModule.prototype.insertImage = insertImage;
 UtilsModule.prototype.sendToFront = sendToFront;
 UtilsModule.prototype.sendToBack = sendToBack;
 UtilsModule.prototype.sendBackward = sendBackward;

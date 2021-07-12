@@ -873,6 +873,7 @@ function HandlersModule() {
                         selectable: false
                     });
                     // canvas.remove(global.template);
+                    global.template.template=true;
                     canvas.add(global.template);
                     canvas.sendToBack(global.template);
                 }
