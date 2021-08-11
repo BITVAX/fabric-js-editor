@@ -110,7 +110,7 @@ function drawObj(objType) {
       var x = drawnObj.left - pointer.x;
       var y = drawnObj.top - pointer.y;
       // console.log('x:'+x+' y:'+y);
-      let h = Math.sqrt(x*x + y*y);
+      var h = Math.sqrt(x*x + y*y);
       var diff = h/2.3;
       var angle = Math.abs(Math.asin(y/h)*(180.0/Math.PI));
       drawnObj.set({inner:  diff*(0.7), outer: diff, spikes: Math.round(angle / 4)});
