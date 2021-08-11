@@ -678,6 +678,15 @@ function listeners() {
     $("#glow-size-slider").on("change", function () {
         setShadow();
     });
+    $('#strokewidth-slider').on('change',function(){
+        var obj=canvas.getActiveObject();
+        obj.set('strokeWidth',$('#strokewidth-slider').val());
+        canvas.renderAll();
+
+        // Push the canvas state to history
+        canvas.trigger("object:statechange");
+
+    });
 }
 
 function setCurrentShadowValues() {
