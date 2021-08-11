@@ -68,6 +68,15 @@ function drawObj(objType) {
         left: pointer.x,
         fill: 'yellow'
       });
+    } else if (objType === 'star') {
+      drawnObj = new fabric.Star({
+        inner: 0,
+        outer: 0,
+        spikes: 0,
+        top: pointer.y,
+        left: pointer.x,
+        fill: 'blue'
+      });
     }
     if(global.template !== null){
       drawnObj.globalCompositeOperation='source-atop';
@@ -96,6 +105,16 @@ function drawObj(objType) {
       var y = drawnObj.top - pointer.y;
       var diff = Math.sqrt(x*x + y*y);
       drawnObj.set({radius: diff/2.3});
+      console.log('diff:'+diff);
+    } else if (objType === 'star') {
+      var x = drawnObj.left - pointer.x;
+      var y = drawnObj.top - pointer.y;
+      // console.log('x:'+x+' y:'+y);
+      let h = Math.sqrt(x*x + y*y);
+      var diff = h/2.3;
+      var angle = Math.abs(Math.asin(y/h)*(180.0/Math.PI));
+      drawnObj.set({inner:  diff*(0.7), outer: diff, spikes: Math.round(angle / 4)});
+      console.log('angle:'+angle);
     }
 
     canvas.renderAll();
@@ -161,12 +180,77 @@ function escHandler(e) {
     $(document).off("keyup", escHandler);
   }
 }
-
+function regularPolygonPoints(sideCount,radius){
+  var sweep=Math.PI*2/sideCount;
+  var cx=radius;
+  var cy=radius;
+  var points=[];
+  for(var i=0;i<sideCount;i++){
+    var x=cx+radius*Math.cos(i*sweep);
+    var y=cy+radius*Math.sin(i*sweep);
+    points.push({x:x,y:y});
+  }
+  return(points);
+}
 /* ----- exports ----- */
 
 function DrawingModule() {
   if (!(this instanceof DrawingModule)) return new DrawingModule();
   // constructor
+  fabric.Star = fabric.util.createClass(fabric.Polygon, {
+    type: 'star',
+    initialize: function (options) {
+      options = options || {};
+      this.set( 'spikes'  , options.spikes   || 0 );
+      this.set( 'inner', options.inner || 0 );
+      this.set( 'outer', options.outer || 0 );
+      this.callSuper('initialize',this.points, options);
+    },
+    calcpoints: function (){
+      var sweep = Math.PI / this.spikes;
+      var points = [];
+      var angle = 0;
+
+      for (var i = 0; i < this.spikes; i++) {
+        var x = Math.cos(angle) * this.outer;
+        var y = Math.sin(angle) * this.outer;
+        points.push({x: x, y: y});
+        angle += sweep;
+
+        x = Math.cos(angle) * this.inner;
+        y = Math.sin(angle) * this.inner;
+        points.push({x: x, y: y});
+        angle += sweep;
+      }
+      return (points);
+    },
+    _setpoints: function(){
+      this.points=this.calcpoints();
+    },
+    _render: function (ctx) {
+      this._setpoints();
+      this.callSuper('_render', ctx);
+    },
+    set: function(options,value){
+      this.callSuper('set', options, value);
+      this._setpoints();
+      this._set("width",this.outer*2);
+      this._set("height",this.outer*2);
+    }
+  });
+
+  //     function (spikeCount, outerRadius, innerRadius){
+  //   var points=starPolygonPoints(spikeCount,outerRadius,innerRadius);
+  //   return new fabric.Polygon(points, {
+  //     strokeLineJoin: 'bevil'
+  //   },false);
+  // };
+  fabric.RegularPolygon = function (sideCount, radius){
+    var points=regularPolygonPoints(sideCount,radius);
+    return new fabric.Polygon(points, {
+      strokeLineJoin: 'bevil'
+    },false);
+  };
 }
 
 DrawingModule.prototype.drawObj = drawObj;

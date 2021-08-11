@@ -382,6 +382,12 @@ function listeners() {
         drawing.drawObj("circle");
         canvas.defaultCursor = 'crosshair';
     });
+    $("#shapes-star").on("click", function () {
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        drawing.drawObj("star");
+        canvas.defaultCursor = 'crosshair';
+    });
 
     $("#shapes-rectangle").on("click", function () {
         canvas.discardActiveObject();
@@ -680,8 +686,8 @@ function setCurrentShadowValues() {
         $("#shadow-switch-label")[0].MaterialSwitch.on();
         $("#glow-switch-label")[0].MaterialSwitch.off();
 
-        $("#shadow-offset-slider")[0].MaterialSlider.on("change", utils.getShadowOffset().x);
-        $("#shadow-blur-slider")[0].MaterialSlider.on("change", utils.getShadowBlur());
+        // $("#shadow-offset-slider")[0].MaterialSlider.on("change", utils.getShadowOffset().x);
+        // $("#shadow-blur-slider")[0].MaterialSlider.on("change", utils.getShadowBlur());
 
         shadowColor = utils.getShadowColor();
         $("#shadow-color-picker").spectrum("set", shadowColor);
@@ -693,7 +699,7 @@ function setCurrentShadowValues() {
         $("#shadow-switch-label")[0].MaterialSwitch.off();
         $("#glow-switch-label")[0].MaterialSwitch.on();
 
-        $("#glow-size-slider")[0].MaterialSlider.on("change", utils.getShadowBlur());
+        // $("#glow-size-slider")[0].MaterialSlider.on("change", utils.getShadowBlur());
 
         shadowColor = utils.getShadowColor();
         $("#glow-color-hex").val(shadowColor);
