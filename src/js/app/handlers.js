@@ -892,7 +892,7 @@ function HandlersModule() {
                     canvas.add(global.template);
                     canvas.sendToBack(global.template);
                 }
-
+                state.save(true);
                 $("#loading-spinner").addClass("noshow");
             });
         } catch (err) {
@@ -951,7 +951,7 @@ function HandlersModule() {
     canvas.on("object:statechange", function () {
         state.save();
     });
-
+    state.save(true);
     isAppLoading = false;
 }
 

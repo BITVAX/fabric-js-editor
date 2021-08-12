@@ -236,8 +236,20 @@ function DrawingModule() {
       this._setpoints();
       this._set("width",this.outer*2);
       this._set("height",this.outer*2);
-    }
+    },
+    toObject: function() {
+      return fabric.util.object.extend(
+          this.callSuper('toObject'), {
+            spikes  : this.get('spikes'),
+            inner : this.get('inner'),
+            outer : this.get('outer')
+          } );
+    },
+
   });
+  fabric.Star.fromObject = function( object, callback ) {
+    return callback(new fabric.Star( object ));
+  };
 
   //     function (spikeCount, outerRadius, innerRadius){
   //   var points=starPolygonPoints(spikeCount,outerRadius,innerRadius);

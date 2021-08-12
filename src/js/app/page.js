@@ -210,7 +210,7 @@ function handleOutlineColorChangeEvent(color) {
     // same color
     return;
   }
-
+  $("#outline-color-hex").val(hex);
   utils.setOutlineColor(hex);
   canvas.renderAll();
   changedOutlineColor = true;
