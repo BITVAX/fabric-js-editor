@@ -951,6 +951,16 @@ function HandlersModule() {
     canvas.on("object:statechange", function () {
         state.save();
     });
+    canvas.on('after:render', function () {
+        var objs=canvas.getObjects();
+        if (objs.length>0){
+            if (global.template !== null && global.template !== objs[0]){
+                global.template = objs[0];
+                objs[0].set("selectable",false);
+            }
+        }
+
+    } );
     state.save(true);
     isAppLoading = false;
 }
