@@ -113,7 +113,8 @@ function drawObj(objType) {
       var h = Math.sqrt(x*x + y*y);
       var diff = h/2.3;
       var angle = Math.abs(Math.asin(y/h)*(180.0/Math.PI));
-      drawnObj.set({inner:  diff*(0.7), outer: diff, spikes: Math.round(angle / 4)});
+      var spikes = Math.round(angle / 4);
+      drawnObj.set({inner:  diff*(spikes < 8 ? (0.7/8.0)*spikes :  0.7), outer: diff, spikes: spikes});
       console.log('angle:'+angle);
     }
 
