@@ -680,7 +680,7 @@ function listeners() {
     });
     $('#strokewidth-slider').on('change',function(){
         var obj=canvas.getActiveObject();
-        obj.set('strokeWidth',$('#strokewidth-slider').val());
+        obj.set('strokeWidth',parseInt($('#strokewidth-slider').val()));
         canvas.renderAll();
 
         // Push the canvas state to history

@@ -105,17 +105,14 @@ function drawObj(objType) {
       var y = drawnObj.top - pointer.y;
       var diff = Math.sqrt(x*x + y*y);
       drawnObj.set({radius: diff/2.3});
-      console.log('diff:'+diff);
     } else if (objType === 'star') {
       var x = drawnObj.left - pointer.x;
       var y = drawnObj.top - pointer.y;
-      // console.log('x:'+x+' y:'+y);
       var h = Math.sqrt(x*x + y*y);
       var diff = h/2.3;
       var angle = Math.abs(Math.asin(y/h)*(180.0/Math.PI));
       var spikes = Math.round(angle / 4);
       drawnObj.set({inner:  diff*(spikes < 8 ? (0.7/8.0)*spikes :  0.7), outer: diff, spikes: spikes});
-      console.log('angle:'+angle);
     }
 
     canvas.renderAll();
