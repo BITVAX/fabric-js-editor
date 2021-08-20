@@ -416,6 +416,7 @@ function listeners() {
             });
             $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
             $('#png_text',parent.document).val(url);
+            $('#png_img',parent.document).html("<img src='"+url+"' />");
             if (parent.oDlgCustomization)
                 parent.oDlgCustomization.dialog("close");
         }
@@ -874,26 +875,40 @@ function HandlersModule() {
     var templateFile = getUrlParameter('template');
     if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
         try {
-            fabric.Image.fromURL('images/templates/' + templateFile, function (objects, options) {
-                global.template = objects;
-                global.optimal = [global.template.width, global.template.height];
-                if (!canvas.contains(global.template)) {
-                    global.template.set({
-                        left: 0,
-                        top: 0,
-/*
-                        height: canvas.height,
-                        width: canvas.width,
-*/
-                        selectable: false
-                    });
-                    // canvas.remove(global.template);
-                    global.template.template=true;
-                    canvas.add(global.template);
-                    canvas.sendToBack(global.template);
+            var url = 'images/templates/' + templateFile;
+            importExport.loadRemoteFile(url, function (decoded_data) {
+                var raw = decoded_data;
+                var data_url = null;
+                if (url.contains('.svg')){
+                    data_url="data:image/svg+xml;base64,"+atob(raw);
                 }
-                state.save(true);
-                $("#loading-spinner").addClass("noshow");
+                if (url.contains('.png')){
+                    data_url="data:image/png;base64,"+atob(raw);
+                }
+                if (data_url!==null){
+                    fabric.Image.fromURL(data_url, function (objects, options) {
+                        global.template = objects;
+                        global.optimal = [global.template.width, global.template.height];
+                        if (!canvas.contains(global.template)) {
+                            global.template.set({
+                                left: 0,
+                                top: 0,
+                                /*
+                                                    height: canvas.height,
+                                                    width: canvas.width,
+                                */
+                                selectable: false
+                            });
+                            // canvas.remove(global.template);
+                            global.template.template=true;
+                            canvas.add(global.template);
+                            canvas.sendToBack(global.template);
+                        }
+                        state.save(true);
+                        $("#loading-spinner").addClass("noshow");
+                    });
+                }
+
             });
         } catch (err) {
             $("#loading-spinner").addClass("noshow");
