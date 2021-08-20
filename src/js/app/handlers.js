@@ -416,6 +416,7 @@ function listeners() {
             });
             $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
             $('#png_text',parent.document).val(url);
+            $('#json_text',parent.document).val(state.getState());
             $('#png_img',parent.document).html("<img src='"+url+"' />");
             if (parent.oDlgCustomization)
                 parent.oDlgCustomization.dialog("close");
@@ -573,12 +574,14 @@ function listeners() {
                     //imgElement.width = 300;
                     if (this.complete) {
                         var imgInstance = new fabric.Image(this, {
-                            scaleX: 1,
-                            scaleY: 1,
+                          scaleX: img[0].width/canvas.width,
+                          scaleY: img[0].width/canvas.width,
                             left: 0,
                             top: 0,
                             angle: 0
+//                            width: canvas.width/2
                         });
+
                         if (global.template !== null) {
                             imgInstance.globalCompositeOperation = 'source-atop';
                         }
@@ -976,6 +979,7 @@ function HandlersModule() {
     canvas.on("object:statechange", function () {
         state.save();
     });
+    var render_ready=function(){};
     canvas.on('after:render', function () {
         var objs=canvas.getObjects();
         if (objs.length>0){
@@ -984,8 +988,16 @@ function HandlersModule() {
                 objs[0].set("selectable",false);
             }
         }
-
+        render_ready();
     } );
+    var json=$('#json_text',parent.document).val();
+    if (json){
+        render_ready=function(){
+            render_ready = function(){};
+            state.save(true);
+        };
+        state.setState(json);
+    }
     state.save(true);
     isAppLoading = false;
 }
