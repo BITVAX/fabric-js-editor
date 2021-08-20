@@ -416,7 +416,7 @@ function listeners() {
             });
             $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
             $('#png_text',parent.document).val(url);
-            $('#json_text',parent.document).val(state.getState());
+            $('#json_text',parent.document).val(JSON.stringify(canvas));
             $('#png_img',parent.document).html("<img src='"+url+"' />");
             if (parent.oDlgCustomization)
                 parent.oDlgCustomization.dialog("close");
@@ -996,7 +996,9 @@ function HandlersModule() {
             render_ready = function(){};
             state.save(true);
         };
-        state.setState(json);
+        canvas.clear();
+        canvas.loadFromJSON(json);
+        canvas.renderAll();
     }
     state.save(true);
     isAppLoading = false;

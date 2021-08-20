@@ -225,6 +225,9 @@ function DrawingModule() {
     _setpoints: function(){
       this.points=this.calcpoints();
     },
+    toSVG : function(reviver){
+      return this.callSuper('toSVG',reviver).replace('star','polygon');
+    },
     _render: function (ctx) {
       this._setpoints();
       this.callSuper('_render', ctx);
