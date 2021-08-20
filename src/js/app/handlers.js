@@ -14,6 +14,7 @@ var text = new (require('./text.js'))();
 var fetchApi = new (require('./fetchApi.js'))();
 var importExport = new (require('./importExport.js'))();
 var isAppLoading = true;
+var render_ready=function(){};
 
 // Initialize state
 var state = new (require('./state.js'))(
@@ -435,7 +436,7 @@ function listeners() {
 
     $("#download-image-button").on("click", function () {
         var type = $("input[name=file-type]:checked").val();
-        var background = $("input[name=background-color]:checked").val();
+        var background = $("input[name=background-color]:checke").val();
 
         var rect;
         if (background === 'white' || type === 'jpeg') {
@@ -917,6 +918,23 @@ function HandlersModule() {
                                 canvas.add(global.template);
                                 canvas.sendToBack(global.template);
                             }
+                            var json=$('#json_text',parent.document).val();
+                            global.template_orig=null;
+                            if (json){
+                                global.template_orig=global.template;
+                                canvas.clear();
+                                canvas.loadFromJSON(json);
+                                render_ready=function(){
+                                    render_ready=function(){};
+                                    var objs=canvas.getObjects();
+                                    if (global.template_orig!==null) {
+                                        objs[0] = global.template_orig;
+                                        canvas.renderAll();
+                                    }
+                                    state.save(true);
+                                };
+                                canvas.renderAll();
+                            }
                             state.save(true);
                             $("#loading-spinner").addClass("noshow");
                         });
@@ -979,7 +997,6 @@ function HandlersModule() {
     canvas.on("object:statechange", function () {
         state.save();
     });
-    var render_ready=function(){};
     canvas.on('after:render', function () {
         var objs=canvas.getObjects();
         if (objs.length>0){
@@ -987,19 +1004,9 @@ function HandlersModule() {
                 global.template = objs[0];
                 objs[0].set("selectable",false);
             }
+            render_ready();
         }
-        render_ready();
     } );
-    var json=$('#json_text',parent.document).val();
-    if (json){
-        render_ready=function(){
-            render_ready = function(){};
-            state.save(true);
-        };
-        canvas.clear();
-        canvas.loadFromJSON(json);
-        canvas.renderAll();
-    }
     state.save(true);
     isAppLoading = false;
 }

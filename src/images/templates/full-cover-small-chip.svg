@@ -1,30 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 24.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
-	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
-	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
-	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
-	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
-	<!ENTITY ns_vars "http://ns.adobe.com/Variables/1.0/">
-	<!ENTITY ns_imrep "http://ns.adobe.com/ImageReplacement/1.0/">
-	<!ENTITY ns_sfw "http://ns.adobe.com/SaveForWeb/1.0/">
-	<!ENTITY ns_custom "http://ns.adobe.com/GenericCustomNamespace/1.0/">
-	<!ENTITY ns_adobe_xpath "http://ns.adobe.com/XPath/1.0/">
-]>
-<svg version="1.1" id="Capa_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-	 x="0px" y="0px" width="271.559px" height="181.984px" viewBox="0 0 271.559 181.984" enable-background="new 0 0 271.559 181.984"
-	 xml:space="preserve">
-<metadata>
-	<sfw  xmlns="&ns_sfw;">
-		<slices></slices>
-		<sliceSourceBounds  bottomLeftOrigin="true" height="153.638" width="242.957" x="14.391" y="-167.989"></sliceSourceBounds>
-	</sfw>
-</metadata>
-<g>
-	<path fill="#FFFFFF" stroke="#E2007C" stroke-width="0.2835" stroke-miterlimit="10" d="M245.207,167.847H26.533
-		c-6.6,0-12-5.4-12-12V26.493c0-6.6,5.4-12,12-12h218.674c6.6,0,12,5.4,12,12v129.354
-		C257.207,162.447,251.807,167.847,245.207,167.847z M75.797,82.263V57.254c0-1.559-1.276-2.835-2.835-2.835H41.639
-		c-1.559,0-2.835,1.276-2.835,2.835v25.009c0,1.559,1.276,2.835,2.835,2.835h31.323C74.522,85.098,75.797,83.822,75.797,82.263z"/>
-</g>
-</svg>
+
+<svg
+   xmlns:ns="&amp;#38;ns_sfw;"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   width="271.559px"
+   height="181.984px"
+   viewBox="0 0 271.559 181.984"
+   enable-background="new 0 0 271.559 181.984"
+   xml:space="preserve"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="full-cover-small-chip.svg"><defs
+     id="defs11" /><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1388"
+     inkscape:window-height="654"
+     id="namedview9"
+     showgrid="false"
+     inkscape:zoom="2.3882152"
+     inkscape:cx="125.53339"
+     inkscape:cy="87.612206"
+     inkscape:window-x="75"
+     inkscape:window-y="34"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Capa_1" /><metadata
+     id="metadata3"><ns:sfw><ns:slices /><ns:sliceSourceBounds
+         bottomLeftOrigin="true"
+         height="153.638"
+         width="242.957"
+         x="14.391"
+         y="-167.989" /></ns:sfw><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><path
+     id="path7"
+     style="fill:#ffffff;stroke:#e2007c;stroke-width:0.21641131;stroke-miterlimit:10"
+     d="m 70.551384,73.271389 0,-16.96302 c 0,-1.057432 -1.09622,-1.922913 -2.435567,-1.922913 l -26.909794,0 c -1.339347,0 -2.435567,0.865481 -2.435567,1.922913 l 0,16.96302 c 0,1.057432 1.09622,1.922914 2.435567,1.922914 l 26.909794,0 c 1.340207,0 2.435567,-0.865482 2.435567,-1.922914 z M 245.207,167.847 l -218.674,0 c -6.6,0 -12,-5.4 -12,-12 l 0,-129.354 c 0,-6.6 5.4,-12 12,-12 l 218.674,0 c 6.6,0 12,5.4 12,12 l 0,129.354 c 0,6.6 -5.4,12 -12,12 z" /></svg>
