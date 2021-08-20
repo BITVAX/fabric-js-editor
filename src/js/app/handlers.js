@@ -824,6 +824,9 @@ function popupCenter(url, title, w, h) {
 
 /* ----- exports ----- */
 var resizeId = null;
+var http = require('http'),
+    Stream = require('stream').Transform;
+
 
 function HandlersModule() {
     if (!(this instanceof HandlersModule)) return new HandlersModule();
@@ -876,40 +879,47 @@ function HandlersModule() {
     if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
         try {
             var url = 'images/templates/' + templateFile;
-            importExport.loadRemoteFile(url, function (decoded_data) {
-                var raw = decoded_data;
-                var data_url = null;
-                if (url.contains('.svg')){
-                    data_url="data:image/svg+xml;base64,"+atob(raw);
-                }
-                if (url.contains('.png')){
-                    data_url="data:image/png;base64,"+atob(raw);
-                }
-                if (data_url!==null){
-                    fabric.Image.fromURL(data_url, function (objects, options) {
-                        global.template = objects;
-                        global.optimal = [global.template.width, global.template.height];
-                        if (!canvas.contains(global.template)) {
-                            global.template.set({
-                                left: 0,
-                                top: 0,
-                                /*
-                                                    height: canvas.height,
-                                                    width: canvas.width,
-                                */
-                                selectable: false
-                            });
-                            // canvas.remove(global.template);
-                            global.template.template=true;
-                            canvas.add(global.template);
-                            canvas.sendToBack(global.template);
-                        }
-                        state.save(true);
-                        $("#loading-spinner").addClass("noshow");
-                    });
-                }
+            http.request(url, function(response) {
+                var data = new Stream();
 
-            });
+                response.on('data', function(chunk) {
+                    data.push(chunk);
+                });
+
+                response.on('end', function() {
+                    var raw = data.read();
+                    var data_url = null;
+                    if (url.includes('.svg')){
+                        data_url="data:image/svg+xml;base64,"+Buffer.from(raw).toString('base64');
+                    }
+                    if (url.includes('.png')){
+                        data_url="data:image/png;base64,"+Buffer.from(raw).toString('base64');
+                    }
+                    if (data_url!==null){
+                        fabric.Image.fromURL(data_url, function (objects, options) {
+                            global.template = objects;
+                            global.optimal = [global.template.width, global.template.height];
+                            if (!canvas.contains(global.template)) {
+                                global.template.set({
+                                    left: 0,
+                                    top: 0,
+                                    /*
+                                                        height: canvas.height,
+                                                        width: canvas.width,
+                                    */
+                                    selectable: false
+                                });
+                                // canvas.remove(global.template);
+                                global.template.template=true;
+                                canvas.add(global.template);
+                                canvas.sendToBack(global.template);
+                            }
+                            state.save(true);
+                            $("#loading-spinner").addClass("noshow");
+                        });
+                    }
+                });
+            }).end();
         } catch (err) {
             $("#loading-spinner").addClass("noshow");
         }
