@@ -12,7 +12,7 @@ function disableDraw() {
 
   canvas.selection = true;
   canvas.forEachObject(function(o) {
-    if (global.template === null || o!=global.template ) {
+    if (global.background === null || o!=global.background ) {
       o.selectable = true;
     }
   });
@@ -45,6 +45,7 @@ function drawObj(objType) {
       });
     } else if (objType === 'square') {
       drawnObj = new fabric.Rect({
+        strokeWidth: 0,
         width: 0,
         height: 0,
         top: pointer.y,
@@ -53,6 +54,7 @@ function drawObj(objType) {
       });
     } else if (objType === 'rounded-rect') {
       drawnObj = new fabric.Rect({
+        strokeWidth: 0,
         width: 0,
         height: 0,
         top: pointer.y,
@@ -63,6 +65,7 @@ function drawObj(objType) {
       });
     } else if (objType === 'circle') {
       drawnObj = new fabric.Circle({
+        strokeWidth: 0,
         radius: 0,
         top: pointer.y,
         left: pointer.x,
@@ -70,6 +73,7 @@ function drawObj(objType) {
       });
     } else if (objType === 'star') {
       drawnObj = new fabric.Star({
+        strokeWidth: 0,
         inner: 0,
         outer: 0,
         spikes: 0,

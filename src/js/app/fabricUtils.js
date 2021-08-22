@@ -31,8 +31,8 @@ function sendBackward() {
   var activeObject = canvas.getActiveObject();
   if (activeObject && activeObject.selectable) {
     canvas.sendBackwards(activeObject);
-    if (global.template !== null){
-      canvas.sendToBack(global.template);
+    if (global.background !== null){
+        canvas.sendToBack(global.background);
     }
     // Push the canvas state to history
     canvas.trigger("object:statechange");
@@ -52,8 +52,8 @@ function sendToBack() {
   var activeObject = canvas.getActiveObject();
   if (activeObject && activeObject.selectable) {
     canvas.sendToBack(activeObject);
-    if (global.template !== null){
-      canvas.sendToBack(global.template);
+    if (global.background !== null){
+       canvas.sendToBack(global.background);
     }
     // Push the canvas state to history
     canvas.trigger("object:statechange");
@@ -494,6 +494,32 @@ function centerContent() {
   canvas.renderAll();
 }
 
+function setBackgroundColor(color){
+  global.background.set({
+    top : 0,
+    left: 0,
+    width: canvas.width,
+    height : canvas.height,
+  });
+  setActiveStyle('fill',color,global.background);
+}
+
+function getBackgroundColor(){
+  var objs = canvas.getObjects();
+  if (global.background !== null){
+    return getActiveStyle('fill',global.background);
+  }
+  return null;
+}
+
+function getOutlineWidth(){
+  return getActiveStyle('strokeWidth');
+}
+
+function setOutlineWidth(w){
+  setActiveStyle('strokeWidth',w);
+}
+
 
 /* ----- exports ----- */
 
@@ -529,5 +555,9 @@ UtilsModule.prototype.getShadowOffset = getShadowOffset;
 UtilsModule.prototype.changeShadowColor = changeShadowColor;
 UtilsModule.prototype.getShadowColor = getShadowColor;
 UtilsModule.prototype.centerContent = centerContent;
+UtilsModule.prototype.setBackgroundColor = setBackgroundColor;
+UtilsModule.prototype.getBackgroundColor = getBackgroundColor;
+UtilsModule.prototype.getOutlineWidth = getOutlineWidth;
+UtilsModule.prototype.setOutlineWidth = setOutlineWidth;
 
 module.exports = UtilsModule;

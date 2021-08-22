@@ -195,7 +195,12 @@ function showActiveTools() {
             if (outlineColor && outlineColor !== "") {
                 $("#toolbar-outline-color").spectrum("set", outlineColor);
             }
-
+            var outlineWidth = utils.getOutlineWidth();
+            if (outlineWidth && outlineWidth !== ''){
+                $("#toolbar-outline-width-slider").val(outlineWidth);
+            }else{
+                $("#toolbar-outline-width-slider").val(0);
+            }
             // Shadow and glow
             setCurrentShadowValues();
             page.glowColorPicker();
@@ -436,7 +441,7 @@ function listeners() {
 
     $("#download-image-button").on("click", function () {
         var type = $("input[name=file-type]:checked").val();
-        var background = $("input[name=background-color]:checke").val();
+        var background = $("input[name=background-color]:checked").val();
 
         var rect;
         if (background === 'white' || type === 'jpeg') {
@@ -562,7 +567,6 @@ function listeners() {
     $('#toolbar-image-input').on('change', function () {
         var oFReader = new FileReader();
         var file = $('#toolbar-image-input').get(0).files[0];
-        oFReader.readAsDataURL(file);
         oFReader.onload = function (oFREvent) {
             if (oFREvent.total > 1024*1024*10){
                 window.alert('Imagen demasiado grande');
@@ -575,8 +579,6 @@ function listeners() {
                     //imgElement.width = 300;
                     if (this.complete) {
                         var imgInstance = new fabric.Image(this, {
-                          scaleX: img[0].width/canvas.width,
-                          scaleY: img[0].width/canvas.width,
                             left: 0,
                             top: 0,
                             angle: 0
@@ -587,13 +589,14 @@ function listeners() {
                             imgInstance.globalCompositeOperation = 'source-atop';
                         }
                         canvas.add(imgInstance);
+                        imgInstance.scaleToHeight(canvas.height*0.8);
                         // renderLayers();
                     }
                 });
                 img.attr('src', oFREvent.target.result);
             }
         };
-
+        oFReader.readAsDataURL(file);
     });
 
     $("#toolbar-image").on("click", function () {
@@ -683,14 +686,8 @@ function listeners() {
     $("#glow-size-slider").on("change", function () {
         setShadow();
     });
-    $('#strokewidth-slider').on('change',function(){
-        var obj=canvas.getActiveObject();
-        obj.set('strokeWidth',parseInt($('#strokewidth-slider').val()));
-        canvas.renderAll();
-
-        // Push the canvas state to history
-        canvas.trigger("object:statechange");
-
+    $('#toolbar-outline-width-slider').on('change',function(){
+        utils.setOutlineWidth(parseInt($('#toolbar-outline-width-slider').val()));
     });
 }
 
@@ -880,6 +877,52 @@ function HandlersModule() {
         }
     }
     var templateFile = getUrlParameter('template');
+
+    function handleTemplateLoad(objects) {
+        global.template = objects;
+        global.optimal = [global.template.width, global.template.height];
+        global.template.set({
+            left: 0,
+            top: 0,
+            selectable: false
+        });
+        global.template.template = true;
+        canvas.backgroundImage = global.template;
+        var json = $('#json_text', parent.document).val();
+        global.template_orig = null;
+        if (json) {
+            global.template_orig = global.template;
+            canvas.clear();
+            canvas.loadFromJSON(json);
+            render_ready = function () {
+                render_ready = function () {
+                };
+                if (global.template_orig !== null) {
+                    canvas.backgroundImage = global.template_orig;
+                    canvas.renderAll();
+                }
+                state.save(true);
+            };
+            canvas.renderAll();
+        }
+        if (global.background === null){
+            global.background=new fabric.Rect({
+                top : 0,
+                left: 0,
+                width: canvas.width,
+                height : canvas.height,
+                globalCompositeOperation : 'source-atop',
+                selectable : false,
+                fill : 'transparent'
+            });
+            canvas.add(global.background);
+            canvas.sendToBack(global.background);
+        }
+
+        state.save(true);
+        $("#loading-spinner").addClass("noshow");
+    }
+
     if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
         try {
             var url = 'images/templates/' + templateFile;
@@ -895,48 +938,20 @@ function HandlersModule() {
                     var data_url = null;
                     if (url.includes('.svg')){
                         data_url="data:image/svg+xml;base64,"+Buffer.from(raw).toString('base64');
+                        // fabric.loadSVGFromURL(data_url, function(objects, options) {
+                        //     var obj = fabric.util.groupSVGElements(objects, options);
+                        //     handleTemplateLoad(obj);
+                        // });
+                        fabric.Image.fromURL(data_url, function (objects, options) {
+                            // global.template = new fabric.Group([objects]);
+                            handleTemplateLoad(objects);
+                        });
                     }
                     if (url.includes('.png')){
                         data_url="data:image/png;base64,"+Buffer.from(raw).toString('base64');
-                    }
-                    if (data_url!==null){
                         fabric.Image.fromURL(data_url, function (objects, options) {
-                            global.template = objects;
-                            global.optimal = [global.template.width, global.template.height];
-                            if (!canvas.contains(global.template)) {
-                                global.template.set({
-                                    left: 0,
-                                    top: 0,
-                                    /*
-                                                        height: canvas.height,
-                                                        width: canvas.width,
-                                    */
-                                    selectable: false
-                                });
-                                // canvas.remove(global.template);
-                                global.template.template=true;
-                                canvas.add(global.template);
-                                canvas.sendToBack(global.template);
-                            }
-                            var json=$('#json_text',parent.document).val();
-                            global.template_orig=null;
-                            if (json){
-                                global.template_orig=global.template;
-                                canvas.clear();
-                                canvas.loadFromJSON(json);
-                                render_ready=function(){
-                                    render_ready=function(){};
-                                    var objs=canvas.getObjects();
-                                    if (global.template_orig!==null) {
-                                        objs[0] = global.template_orig;
-                                        canvas.renderAll();
-                                    }
-                                    state.save(true);
-                                };
-                                canvas.renderAll();
-                            }
-                            state.save(true);
-                            $("#loading-spinner").addClass("noshow");
+                            // global.template = new fabric.Group([objects]);
+                            handleTemplateLoad(objects);
                         });
                     }
                 });
@@ -1000,8 +1015,8 @@ function HandlersModule() {
     canvas.on('after:render', function () {
         var objs=canvas.getObjects();
         if (objs.length>0){
-            if (global.template !== null && global.template !== objs[0]){
-                global.template = objs[0];
+            if (global.background !== null && global.background !== objs[0]){
+                global.background = objs[0];
                 objs[0].set("selectable",false);
             }
             render_ready();

@@ -130,6 +130,7 @@ function showPreview() {
 
 var changedFillColor;
 var changedOutlineColor;
+var changedBackgroundColor;
 
 function handleFillColorChangeEvent(color) {
   if (canvas.getActiveObject() === null || canvas.getActiveObject() === undefined) {
@@ -180,6 +181,57 @@ function fillColorPicker() {
   });
 
   $("#toolbar-fill-color").spectrum("container").find(".sp-input").on('keydown', function(evt) {
+    var key = evt.keyCode || evt.which;
+    if (key === 13) {
+      handleFillColorChangeEvent($(this).val());
+    }
+  });
+}
+
+function handleBackgroundColorChangeEvent(color) {
+  var hex = color;
+  if (typeof(hex) === "object") {
+    hex = color.toRgbString();
+  }
+
+  if (hex === utils.getBackgroundColor()) {
+    // same color
+    return;
+  }
+
+  utils.setBackgroundColor(hex);
+  canvas.renderAll();
+  changedBackgroundColor = true;
+}
+
+function backgroundColorPicker() {
+  $("#toolbar-background-color").spectrum({
+    preferredFormat: "hex",
+    showInput: true,
+    color: 'white',
+    showButtons: false,
+    // showAlpha: true,
+    clickoutFiresChange: false,
+    show: function(color) {
+      changedBackgroundColor = false;
+    },
+    hide: function(color) {
+      if (changedBackgroundColor === true) {
+        // Push the canvas state to history
+        canvas.trigger("object:statechange");
+      }
+      $("#toolbar-background-color").removeClass("toolbar-item-active");
+      $(".mdl-tooltip").removeClass("noshow");
+    }
+  });
+
+  $("#toolbar-background-color").off("dragstop.spectrum");
+  $("#toolbar-background-color").on("dragstop.spectrum", function(e, color) {
+    handleBackgroundColorChangeEvent(color);
+    return false;
+  });
+
+  $("#toolbar-background-color").spectrum("container").find(".sp-input").on('keydown', function(evt) {
     var key = evt.keyCode || evt.which;
     if (key === 13) {
       handleFillColorChangeEvent($(this).val());
@@ -448,7 +500,11 @@ function PageModule() {
   // handlers
   noBackspace();
   arrowKeys();
-
+  this.backgroundColorPicker();
+  var backgroundColor = utils.getBackgroundColor();
+  if (backgroundColor && backgroundColor !== "") {
+    $("#toolbar-background-color").spectrum("set", backgroundColor);
+  }
   // fix broken MDL sliders in IE Edge Browser
   var user_agent = navigator.userAgent;
   var edge = /(edge)\/((\d+)?[\w\.]+)/i;
@@ -475,5 +531,5 @@ PageModule.prototype.toggleArtworkNoResults = toggleArtworkNoResults;
 PageModule.prototype.fitArtworkResultsHeight = fitArtworkResultsHeight;
 PageModule.prototype.shadowColorPicker = shadowColorPicker;
 PageModule.prototype.glowColorPicker = glowColorPicker;
-
+PageModule.prototype.backgroundColorPicker = backgroundColorPicker;
 module.exports = PageModule;

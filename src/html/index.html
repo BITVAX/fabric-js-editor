@@ -227,6 +227,11 @@
                 <input id="toolbar-image-input" type="file" style="display:none;">
                 <div class="mdl-tooltip mdl-tooltip--large noselect" for="toolbar-image">Insert Image</div>
 
+                <div id="toolbar-background-color" class="toolbar-item toolbar-dropdown">
+                    <div class="toolbar-arrow"></div>
+                </div>
+                <div class="mdl-tooltip mdl-tooltip--large noselect" for="toolbar-background-color">Background color</div>
+
                 <div class="toolbar-separator"></div>
 
                 <div id="active-tools" class="noshow">
@@ -316,7 +321,7 @@
                                     <span class="outline-form-label">Width</span> <br/>
                                     <div class="slider-container">
                                         <input class="mdl-slider mdl-js-slider" type="range" min="0" max="30" value="0"
-                                               tabindex="0" id="strokewidth-slider">
+                                               tabindex="0" id="toolbar-outline-width-slider">
                                     </div>
                                     <span class="outline-form-label">Color</span> <br/>
                                     <input type="text" class="hex-display" id="outline-color-hex" value="#000000"
