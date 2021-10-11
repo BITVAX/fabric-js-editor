@@ -420,12 +420,12 @@ function listeners() {
                 width: canvas.width,
                 height: canvas.height
             });
-            $('#svg_text',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
-            $('#png_text',parent.document).val(url);
-            $('#json_text',parent.document).val(JSON.stringify(canvas));
+            $('#option_svg',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
+            $('#option_png',parent.document).val(url);
+            $('#option_json',parent.document).val(JSON.stringify(canvas));
             $('#png_img',parent.document).html("<img src='"+url+"' />");
-            if (parent.oDlgCustomization)
-                parent.oDlgCustomization.dialog("close");
+            $('#type',parent.document).find('input#option_'+$('#dlgCustomization',parent.document).attr('class')).attr("checked",true);
+            $('#dlgCustomization-popup',parent.document).hide();
         }
         // toggle($("#sidebar-export"));
         return false;
@@ -888,7 +888,7 @@ function HandlersModule() {
         });
         global.template.template = true;
         canvas.backgroundImage = global.template;
-        var json = $('#json_text', parent.document).val();
+        var json = $('#option_json', parent.document).val();
         global.template_orig = null;
         if (json) {
             global.template_orig = global.template;
