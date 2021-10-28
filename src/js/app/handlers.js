@@ -891,7 +891,8 @@ function HandlersModule() {
         }
     }
     var templateFile = getUrlParameter('template');
-    global.lang = getUrlParameter('lang');
+    global.store = getUrlParameter('lang');
+    global.lang = global.store.substr(0,2);
     if (global.lang === null || global.lang=='de' || global.lang=='fr' || global.lang=='it' || global.lang=='nl' || global.lang=='pt') {
         global.lang = 'en';
     }

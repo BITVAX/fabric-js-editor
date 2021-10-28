@@ -79,7 +79,7 @@ function queryClipartApi(page, numResults, callback) {
 }
 
 function queryBitvaxApi(page, numResults, callback) {
-  var endpoint = "/en/artwork";
+  var endpoint = "/"+global.store+"/artwork";
 
   if (cachedResults === null) {
     var xhr = $.ajax({
