@@ -111,9 +111,19 @@ body {
   position: absolute;
   color: white;
   background-color: $download-button-color;
-  right: 67px;
+  right: 148px;
   &:hover {
     background-color: lighten($download-button-color, 10%);
+  }
+}
+#close-button {
+  position: absolute;
+  color: white;
+  background-color: $close-button-color;
+  right: 50px;
+  width:60px;
+  &:hover {
+    background-color: lighten($close-button-color, 10%);
   }
 }
 

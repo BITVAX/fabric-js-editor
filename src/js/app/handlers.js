@@ -437,6 +437,13 @@ function listeners() {
         return false;
     });
 
+    $("#close-button").on("click", function () {
+        if (parent !== undefined) {
+            $('#dlgCustomization-popup', parent.document).hide();
+        }
+        return false;
+    });
+
     $("#preview-button").on("click", function () {
         page.showPreview();
         hideActiveTools();
