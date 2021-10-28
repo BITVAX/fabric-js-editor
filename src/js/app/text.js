@@ -4,7 +4,7 @@ var canvas = global.canvas;
 var drawing = new (require('./drawing.js'))();
 
 function insertText() {
-  canvas.defaultCursor = 'crosshair';
+  canvas.defaultCursor = 'pointer';
 
   // Esc key handler
   $(document).on("keyup", escHandler);

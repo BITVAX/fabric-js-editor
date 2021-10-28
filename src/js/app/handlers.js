@@ -14,7 +14,8 @@ var text = new (require('./text.js'))();
 var fetchApi = new (require('./fetchApi.js'))();
 var importExport = new (require('./importExport.js'))();
 var isAppLoading = true;
-var render_ready=function(){};
+var render_ready = function () {
+};
 
 // Initialize state
 var state = new (require('./state.js'))(
@@ -196,9 +197,9 @@ function showActiveTools() {
                 $("#toolbar-outline-color").spectrum("set", outlineColor);
             }
             var outlineWidth = utils.getOutlineWidth();
-            if (outlineWidth && outlineWidth !== ''){
+            if (outlineWidth && outlineWidth !== '') {
                 $("#toolbar-outline-width-slider").val(outlineWidth);
-            }else{
+            } else {
                 $("#toolbar-outline-width-slider").val(0);
             }
             // Shadow and glow
@@ -410,7 +411,7 @@ function listeners() {
     });
 
     $("#download-button").on("click", function () {
-        if (parent !== undefined){
+        if (parent !== undefined) {
             var url = canvas.toDataURL({
                 format: 'png',
                 left: 0,
@@ -420,12 +421,17 @@ function listeners() {
                 width: canvas.width,
                 height: canvas.height
             });
-            $('#option_svg',parent.document).val(canvas.toSVG({'width': global.optimal[0], 'height': global.optimal[1]}));
-            $('#option_png',parent.document).val(url);
-            $('#option_json',parent.document).val(JSON.stringify(canvas));
-            $('#png_img',parent.document).html("<img src='"+url+"' />");
-            $('#type',parent.document).find('input#option_'+$('#dlgCustomization',parent.document).attr('class')).attr("checked",true);
-            $('#dlgCustomization-popup',parent.document).hide();
+            $('#option_svg', parent.document).val(canvas.toSVG({
+                'width': global.optimal[0],
+                'height': global.optimal[1]
+            }));
+            $('#option_png', parent.document).val(url);
+            $('#option_json', parent.document).val(JSON.stringify(canvas));
+            $('#png_img', parent.document).html("<img src='" + url + "' />");
+            $('#type', parent.document).find('.clic').removeClass('selected');
+            $('#type', parent.document).find('input#option_' + $('#dlgCustomization', parent.document).attr('class')).parent('.clic').addClass('selected');
+            $('#type', parent.document).find('input#option_' + $('#dlgCustomization', parent.document).attr('class')).attr("checked", true);
+            $('#dlgCustomization-popup', parent.document).hide();
         }
         // toggle($("#sidebar-export"));
         return false;
@@ -568,9 +574,9 @@ function listeners() {
         var oFReader = new FileReader();
         var file = $('#toolbar-image-input').get(0).files[0];
         oFReader.onload = function (oFREvent) {
-            if (oFREvent.total > 1024*1024*10){
+            if (oFREvent.total > 1024 * 1024 * 10) {
                 window.alert('Imagen demasiado grande');
-            }else {
+            } else {
                 var img = $('<img />', {
                     id: file.name /*+ '-' + randomString(4)*/,
                 });
@@ -589,7 +595,7 @@ function listeners() {
                             imgInstance.globalCompositeOperation = 'source-atop';
                         }
                         canvas.add(imgInstance);
-                        imgInstance.scaleToHeight(canvas.height*0.8);
+                        imgInstance.scaleToHeight(canvas.height * 0.8);
                         // renderLayers();
                     }
                 });
@@ -603,16 +609,16 @@ function listeners() {
         $('#toolbar-image-input').trigger('click');
     });
 
-    $("#toolbar-draw").on('click', function(){
-        if (canvas.isDrawingMode){
+    $("#toolbar-draw").on('click', function () {
+        if (canvas.isDrawingMode) {
             $(this).removeClass("toolbar-item-active");
-            canvas.isDrawingMode=false;
-        }else{
+            canvas.isDrawingMode = false;
+        } else {
             $(this).addClass("toolbar-item-active");
-            canvas.isDrawingMode=true;
+            canvas.isDrawingMode = true;
         }
     });
-    canvas.on('path:created',function(opt){
+    canvas.on('path:created', function (opt) {
         if (global.template !== null) {
             opt.path.globalCompositeOperation = 'source-atop';
             canvas.renderAll();
@@ -686,7 +692,7 @@ function listeners() {
     $("#glow-size-slider").on("change", function () {
         setShadow();
     });
-    $('#toolbar-outline-width-slider').on('change',function(){
+    $('#toolbar-outline-width-slider').on('change', function () {
         utils.setOutlineWidth(parseInt($('#toolbar-outline-width-slider').val()));
     });
 }
@@ -743,7 +749,7 @@ function setShadow() {
     }
 }
 
-function rescale_canvas_if_needed(height , width ) {
+function rescale_canvas_if_needed(height, width) {
     var optimal_dimensions = global.optimal;
     var scaleFactorX = width / optimal_dimensions[0];
     var scaleFactorY = height / optimal_dimensions[1];
@@ -775,9 +781,9 @@ function rescale_canvas_if_needed(height , width ) {
 }
 
 function resizeHandler() {
-    if (global.template!==null){
+    if (global.template !== null) {
         rescale_canvas_if_needed(window.innerHeight - $("#toolbar").height() - 150, $("#content").width() - 100, $("#content").width() - 100, window.innerHeight - $("#toolbar").height() - 150);
-    }else{
+    } else {
         // Resize the canvas size
         var width = $("#content").width() - 100;
         canvas.setWidth(width);
@@ -802,6 +808,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
+    return null;
 };
 
 function popupCenter(url, title, w, h) {
@@ -877,6 +884,12 @@ function HandlersModule() {
         }
     }
     var templateFile = getUrlParameter('template');
+    global.lang = getUrlParameter('lang');
+    if (global.lang === null || global.lang=='de' || global.lang=='fr' || global.lang=='it' || global.lang=='nl' || global.lang=='pt') {
+        global.lang = 'en';
+    }
+    $("[lang='"+global.lang+"']").css("visibility","visible");
+    $("[lang='"+global.lang+"']").css("position","relative");
 
     function handleTemplateLoad(objects) {
         global.template = objects;
@@ -905,15 +918,15 @@ function HandlersModule() {
             };
             canvas.renderAll();
         }
-        if (global.background === null){
-            global.background=new fabric.Rect({
-                top : 0,
+        if (global.background === null) {
+            global.background = new fabric.Rect({
+                top: 0,
                 left: 0,
                 width: canvas.width,
-                height : canvas.height,
-                globalCompositeOperation : 'source-atop',
-                selectable : false,
-                fill : 'transparent'
+                height: canvas.height,
+                globalCompositeOperation: 'source-atop',
+                selectable: false,
+                fill: 'transparent'
             });
             canvas.add(global.background);
             canvas.sendToBack(global.background);
@@ -926,18 +939,18 @@ function HandlersModule() {
     if (templateFile !== null && templateFile !== undefined && templateFile !== "") {
         try {
             var url = 'images/templates/' + templateFile;
-            http.request(url, function(response) {
+            http.request(url, function (response) {
                 var data = new Stream();
 
-                response.on('data', function(chunk) {
+                response.on('data', function (chunk) {
                     data.push(chunk);
                 });
 
-                response.on('end', function() {
+                response.on('end', function () {
                     var raw = data.read();
                     var data_url = null;
-                    if (url.includes('.svg')){
-                        data_url="data:image/svg+xml;base64,"+Buffer.from(raw).toString('base64');
+                    if (url.includes('.svg')) {
+                        data_url = "data:image/svg+xml;base64," + Buffer.from(raw).toString('base64');
                         // fabric.loadSVGFromURL(data_url, function(objects, options) {
                         //     var obj = fabric.util.groupSVGElements(objects, options);
                         //     handleTemplateLoad(obj);
@@ -947,8 +960,8 @@ function HandlersModule() {
                             handleTemplateLoad(objects);
                         });
                     }
-                    if (url.includes('.png')){
-                        data_url="data:image/png;base64,"+Buffer.from(raw).toString('base64');
+                    if (url.includes('.png')) {
+                        data_url = "data:image/png;base64," + Buffer.from(raw).toString('base64');
                         fabric.Image.fromURL(data_url, function (objects, options) {
                             // global.template = new fabric.Group([objects]);
                             handleTemplateLoad(objects);
@@ -1013,15 +1026,15 @@ function HandlersModule() {
         state.save();
     });
     canvas.on('after:render', function () {
-        var objs=canvas.getObjects();
-        if (objs.length>0){
-            if (global.background !== null && global.background !== objs[0]){
+        var objs = canvas.getObjects();
+        if (objs.length > 0) {
+            if (global.background !== null && global.background !== objs[0]) {
                 global.background = objs[0];
-                objs[0].set("selectable",false);
+                objs[0].set("selectable", false);
             }
             render_ready();
         }
-    } );
+    });
     state.save(true);
     isAppLoading = false;
 }
