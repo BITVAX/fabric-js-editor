@@ -7,7 +7,8 @@ $(function() {
 	global.template = null;
 	global.background = null;
 	global.optimal = null;
-	global.store = null;
+	global.store = 'en_eu';
 	global.lang = 'en';
+	global.data = null;
 	new (require('./app/handlers.js'))();
 });

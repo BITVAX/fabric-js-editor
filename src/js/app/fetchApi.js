@@ -17,118 +17,81 @@ var loading = false;
 var urls = {};
 var cachedResults = null;
 
-function queryNounApi(page, numResults, callback) {
-  var endpoint = config.icons.host;
 
-  if (cachedResults === null) {
+function get_search(categories,search) {
+  var res = [];
+  for (var categoriesKey in categories) {
+    var category = categories[categoriesKey];
+    if (category.products.length > 0)
+      res = [].concat(res,
+          category.products.filter(function (x){ return x.names.indexOf(search) !== -1}).map(function (x) {
+            x.category = {'name': category.name, 'id': category.id};
+            return x;
+          })
+      );
+    if (category.categories.length > 0) res = [].concat(res, get_search(category.categories,search));
+  }
+  return res;
+};
+
+function prepare_payload(response,search) {
+  var icons = get_search(response, search);
+  var totalResults = icons.length;
+  var payload = [];
+  for (var i = 0; i < totalResults; i++) {
+    var thisId = icons[i]['id'];
+    // var folder = parseInt(thisId/1000);
+    payload.push({
+      id: thisId,
+      title: icons[i]['name'],
+      uploader: icons[i]['category']['name'],
+      uploader_url: icons[i][3],
+      svg: {
+        url: icons[i]['image'].replace(".jpg", ".svg"),
+        png_thumb: icons[i]['thumbnail']
+      }
+    });
+  }
+  return payload;
+}
+
+function getBitvaxData(prepareCallback){
+  var endpoint = config.icons.host+"/"+global.store+"/artwork";
+  function success_callback(response) {
+    global.data = response;
+    prepareCallback(response);
+  }
+
+  if (global.data == null) {
     var xhr = $.ajax({
       url: endpoint,
       data: {
         t: keyword
       },
-      success: function(response) {
-        var icons = JSON.parse(response);
-        var totalResults = icons.length;
-
-        var payload = [];
-        for (var i = 0; i < totalResults; i++) {
-          var thisId = icons[i][0];
-          var folder = parseInt(thisId/1000);
-          payload.push({
-            id: thisId,
-            title: icons[i][1],
-            uploader: icons[i][2],
-            uploader_url: icons[i][3],
-            svg: {
-              url: endpoint + "/svg/" + folder + "/" + thisId + ".svg",
-              png_thumb: endpoint + "/png/" + folder + "/" + thisId + ".png"
-            }
-          });
-        }
-        cachedResults = payload;
-        var thisPage = payload.slice(0, numResults);
-        callback(thisPage, thisPage.length, Math.ceil(payload.length/numResults), page, true);
-      }
+      success: success_callback
     });
     outstandingQueries.push(xhr);
   } else {
-    var thisPage = cachedResults.slice((page-1)*numResults,((page-1)*numResults)+numResults);
-    var allPages = Math.ceil(cachedResults.length/numResults);
-    callback(thisPage, thisPage.length, allPages, page, true);
+    success_callback(global.data);
   }
-}
 
-function queryClipartApi(page, numResults, callback) {
-  var clipartAPI = "//openclipart.org/search/json/";
-  var xhr = $.ajax({
-    url: clipartAPI,
-    jsonp: "callback",
-    dataType: "jsonp",
-    data: {
-      query: keyword,
-      amount: numResults,
-      sort: "downloads",
-      page: page
-    },
-    success: function(response) {
-      var i = response.info;
-      callback(response.payload, i.results, i.pages, i.current_page, false);
-    }
-  });
-  outstandingQueries.push(xhr);
 }
 
 function queryBitvaxApi(page, numResults, callback) {
-  var endpoint = "/"+global.store+"/artwork";
-
   if (cachedResults === null) {
-    var xhr = $.ajax({
-      url: endpoint,
-      data: {
-        t: keyword
-      },
-      success: function(response) {
-        var get_icons = function(categories){
-          var res = [];
-          for (var categoriesKey in categories) {
-            var category=categories[categoriesKey];
-            if (category.products.length > 0)  res=[].concat(res,
-                category.products.map(function(x){x.category= {'name':category.name,'id':category.id}; return x;}));
-            if (category.categories.length > 0) res=[].concat(res,get_icons(category.categories));
-          }
-          return res;
-        };
-        var icons = get_icons(response);
-        var totalResults = icons.length;
-        var payload = [];
-        for (var i = 0; i < totalResults; i++) {
-          var thisId = icons[i]['id'];
-          // var folder = parseInt(thisId/1000);
-          payload.push({
-            id: thisId,
-            title: icons[i]['name'],
-            uploader: icons[i]['category']['name'],
-            uploader_url: icons[i][3],
-            svg: {
-              url: icons[i]['image'].replace(".jpg",".svg"),
-              png_thumb: icons[i]['thumbnail']
-            }
-          });
-        }
-        cachedResults = payload;
-        var thisPage = payload.slice(0, numResults);
-        callback(thisPage, thisPage.length, Math.ceil(payload.length/numResults), page, true);
-      }
+    getBitvaxData(function (response){
+      cachedResults = prepare_payload(response,keyword);
+      var thisPage = cachedResults.slice(0, numResults);
+      callback(thisPage, thisPage.length, Math.ceil(cachedResults.length / numResults), page);
     });
-    outstandingQueries.push(xhr);
   } else {
     var thisPage = cachedResults.slice((page-1)*numResults,((page-1)*numResults)+numResults);
     var allPages = Math.ceil(cachedResults.length/numResults);
-    callback(thisPage, thisPage.length, allPages, page, true);
+    callback(thisPage, thisPage.length, allPages, page);
   }
 }
 
-function loadMore(_nouns) {
+function loadMore() {
   if (currentPage === numPages) {
     return;
   } else if (loading === true) {
@@ -140,21 +103,12 @@ function loadMore(_nouns) {
   currentPage += 1;
   toggleSpinner(true);
 
-  if (_nouns === true) {
-    queryNounApi(currentPage, pageSize, function(results, _numResults, _pages, _currentPage) {
+  queryBitvaxApi(currentPage, pageSize, function(results, _numResults, _pages, _currentPage) {
       currentPage = _currentPage;
       displayResults(results);
       toggleSpinner(false);
       loading = false;
     });
-  } else {
-    queryClipartApi(currentPage, pageSize, function(results, _numResults, _pages, _currentPage) {
-      currentPage = _currentPage;
-      displayResults(results);
-      toggleSpinner(false);
-      loading = false;
-    });
-  }
 }
 
 function displayResults(results) {
@@ -164,19 +118,11 @@ function displayResults(results) {
     urls[id] = image.svg.url;
 
     var title, source, source_href, user_href;
-    if ("total_favorites" in image) {
-      // Openclipart
-      title = null;
-      source = "Openclipart";
-      source_href = "https://data.daringlogos.com/redirect?url=http://openclipart.org";
-      user_href = "https://data.daringlogos.com/redirect?url=http://openclipart.org/user-detail/" + image.uploader;
-    } else {
       // Noun Project
       title = image.title;
-      source = "The Noun Project";
-      source_href = "https://data.daringlogos.com/redirect?url=http://thenounproject.com";
-      user_href = "https://data.daringlogos.com/redirect?url=http://thenounproject.com" + image.uploader_url;
-    }
+      source = "Acesticker";
+      source_href = "https://www.acesticker.com";
+      user_href = "https://www.acesticker.com" + image.uploader_url;
 
     var attribution = '<br/>';
     if (title !== null && title !== "") {
@@ -216,7 +162,7 @@ function cancelOutstandingQueries() {
   }
 }
 
-function parseResults(results, _numResults, _numPages, _currentPage, _nouns) {
+function parseResults(results, _numResults, _numPages, _currentPage) {
   // Metadata
   numResults = _numResults;
   numPages = _numPages;
@@ -236,14 +182,10 @@ function parseResults(results, _numResults, _numPages, _currentPage, _nouns) {
   if (_numPages > 1) {
     resultsDiv.on("scroll.scrollHandler", function(){
       if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
-        loadMore(_nouns);
+        loadMore();
       }
     });
   }
-}
-
-function parseResultsBitvax(results) {
-
 }
 
 function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _actionHandler, _clipart) {
@@ -273,25 +215,16 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
   // Query API
   toggleSpinner(true);
   pageSize = Math.ceil((window.innerHeight - 50) / 100) * 3;
-
-  if (_clipart === 'clipart') {
-    queryClipartApi(1, pageSize, parseResults);
-  }else if (_clipart === 'Bitvax'){
-    queryBitvaxApi(1, pageSize, parseResults);
-  }else {
-    cachedResults = null;
-    queryNounApi(1, pageSize, parseResults);
-  }
-
+  queryBitvaxApi(1, pageSize, parseResults);
 }
 
 /* ----- exports ----- */
 
 function FetchApiModule() {
   if (!(this instanceof FetchApiModule)) return new FetchApiModule();
+  getBitvaxData(function (response){});
 }
 
 FetchApiModule.prototype.search = search;
-FetchApiModule.prototype.queryBitvaxApi = queryBitvaxApi;
 
 module.exports = FetchApiModule;

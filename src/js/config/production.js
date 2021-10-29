@@ -2,6 +2,6 @@
 
 module.exports = {
   icons: {
-    host: "//data.daringlogos.com"
+    host: ""
   }
 };

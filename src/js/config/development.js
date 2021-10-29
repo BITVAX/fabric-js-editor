@@ -2,6 +2,6 @@
 
 module.exports = {
   icons: {
-    host: "//localhost:5000"
+    host: "https://www.acesticker.com"
   }
 };
