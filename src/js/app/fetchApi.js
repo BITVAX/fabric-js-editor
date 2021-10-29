@@ -24,35 +24,37 @@ function get_search(categories,search) {
     var category = categories[categoriesKey];
     if (category.products.length > 0)
       res = [].concat(res,
-          category.products.filter(function (x){ return x.names.indexOf(search) !== -1}).map(function (x) {
-            x.category = {'name': category.name, 'id': category.id};
-            return x;
+          category.products.filter(function (x){
+            return x.names.toLowerCase().indexOf(search.toLowerCase()) !== -1})
+              .map(function (x) {
+                x.category = {'name': category.name, 'id': category.id};
+                return x;
           })
       );
-    if (category.categories.length > 0) res = [].concat(res, get_search(category.categories,search));
+    if (Object.keys(category.categories).length > 0) res = [].concat(res, get_search(category.categories,search));
   }
   return res;
 };
 
 function prepare_payload(response,search) {
   var icons = get_search(response, search);
-  var totalResults = icons.length;
-  var payload = [];
-  for (var i = 0; i < totalResults; i++) {
-    var thisId = icons[i]['id'];
-    // var folder = parseInt(thisId/1000);
-    payload.push({
-      id: thisId,
-      title: icons[i]['name'],
-      uploader: icons[i]['category']['name'],
-      uploader_url: icons[i][3],
-      svg: {
-        url: icons[i]['image'].replace(".jpg", ".svg"),
-        png_thumb: icons[i]['thumbnail']
-      }
-    });
-  }
-  return payload;
+  // var totalResults = icons.length;
+  // var payload = [];
+  // for (var i = 0; i < totalResults; i++) {
+  //   var thisId = icons[i]['id'];
+  //   // var folder = parseInt(thisId/1000);
+  //   payload.push({
+  //     id: thisId,
+  //     title: icons[i]['name'],
+  //     uploader: icons[i]['category']['name'],
+  //     uploader_url: icons[i][3],
+  //     svg: {
+  //       url: icons[i]['image'].replace(".jpg", ".svg"),
+  //       png_thumb: icons[i]['thumbnail']
+  //     }
+  //   });
+  // }
+  return icons;
 }
 
 function getBitvaxData(prepareCallback){
@@ -114,24 +116,23 @@ function loadMore() {
 function displayResults(results) {
   for (var i = 0; i < results.length ; i++) {
     var image = results[i];
-    var id = image.id;
-    urls[id] = image.svg.url;
+    urls[image.id] = config.icons.host+image.image.replace(".jpg", ".svg");
 
-    var title, source, source_href, user_href;
-      // Noun Project
-      title = image.title;
-      source = "Acesticker";
-      source_href = "https://www.acesticker.com";
-      user_href = "https://www.acesticker.com" + image.uploader_url;
+    // var title, source, source_href, user_href;
+    //   // Noun Project
+    //   title = image.title;
+    //   source = "Acesticker";
+    //   source_href = "https://www.acesticker.com";
+    //   user_href = "https://www.acesticker.com" + image.uploader_url;
 
-    var attribution = '<br/>';
-    if (title !== null && title !== "") {
-      attribution += "<strong style='text-transform: capitalize;'>" + title + "</strong><br/><br/>";
-    }
-    attribution += "By <a target='_blank' href='" + user_href + "'>";
-    attribution += image.uploader + "</a> From <a target='_blank' href='" + source_href + "'>" + source + "</a><br/>&nbsp;";
+    // var attribution = '';
+    // if (title !== null && title !== "") {
+    //   attribution += "<strong>" + image.name + "</strong>";
+    // }
+    // attribution += "By <a target='_blank' href='" + user_href + "'>";
+    // attribution += image.uploader + "</a> From <a target='_blank' href='" + source_href + "'>" + source + "</a><br/>&nbsp;";
 
-    resultsDiv.append('<img class="preview-image tooltip" title="' + attribution + '" src="' + image.svg.png_thumb + '" id="' + id + '">');
+    resultsDiv.append('<img class="preview-image tooltip" title="' + image.name + '" src="' + image.thumbnail + '" id="' + image.id + '">');
   }
 
   // Show attribution tooltips
