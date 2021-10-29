@@ -208,6 +208,7 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
   // Clear search results
   resultsDiv.off("scroll.scrollHandler");
   resultsDiv.children(".preview-image").remove();
+  cachedResults=null;
 
   // Reset
   loading = false;
@@ -215,7 +216,7 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
 
   // Query API
   toggleSpinner(true);
-  pageSize = Math.ceil((window.innerHeight - 50) / 100) * 3;
+  pageSize = Math.ceil((window.innerHeight - 50) / 35) * 4;
   queryBitvaxApi(1, pageSize, parseResults);
 }
 

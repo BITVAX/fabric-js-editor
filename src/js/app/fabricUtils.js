@@ -278,16 +278,20 @@ function insertSvg(url, loader) {
   fabric.loadSVGFromURL(url, function(objects, options) {
     var obj = fabric.util.groupSVGElements(objects, options);
 
-    var scaleFactor = 1;
-    if (obj.width > obj.height) {
-      scaleFactor = (canvas.width / 3) / obj.width;
-    } else {
-      scaleFactor = (canvas.height / 3) / obj.height;
-    }
+    var scaleFactor = 0.5;
+    // if (obj.width > obj.height) {
+    //   scaleFactor = (canvas.width / 3) / obj.width;
+    // } else {
+    //   scaleFactor = (canvas.height / 3) / obj.height;
+    // }
+
+    // if(obj.height > canvas.height){
+    //   scaleFactor = (canvas.height / obj.height) / 2;
+    // }
 
     obj.set({
-      top: Math.floor(canvas.height / 5),
-      left: Math.floor(canvas.width / 5),
+      top: Math.floor(canvas.height / 10),
+      left: Math.floor(canvas.width / 10),
       scaleY: scaleFactor,
       scaleX: scaleFactor
     });
