@@ -2,6 +2,7 @@
 
 var canvas = global.canvas;
 var utils = new (require('./fabricUtils.js'))();
+var fetchApi = new (require('./fetchApi.js'))();
 
 function noBackspace() {
   // Prevent the backspace key from navigating back
@@ -421,6 +422,15 @@ function openPanel(button, animate) {
   // Panel-specific logic
   if (pname === "artwork") {
     $("#drawer #artwork-search").trigger("select");
+    var resultsDiv = $("#artwork-panel > .search-results");
+
+    fetchApi.load(toggleArtworkSearchSpinner,
+        toggleArtworkNoResults,
+        resultsDiv,
+        function (url) {
+          utils.insertSvg(url, $("#loading-spinner"));
+          closePanel(null, true);
+        });
   }
 }
 
