@@ -40,6 +40,16 @@
 
 <div id="sidebar" class="noselect">
 
+    <div id="sidebar-image" class="sidebar-item">
+        <span class="inactive"><img class="sidebar-img" src="images/sidebar/image.png"></span>
+        <span class="active noshow"><img class="sidebar-img" src="images/sidebar/image.png"></span>
+        <br/>
+        <span lang="en">Image</span>
+        <span lang="es">Imagen</span>
+
+
+    </div><!-- /sidebar-item -->
+
     <div id="sidebar-artwork" class="sidebar-item">
         <span class="inactive"><img class="sidebar-img" src="images/sidebar/artwork.png"></span>
         <span class="active noshow"><img class="sidebar-img" src="images/sidebar/artwork.png"></span>
@@ -61,8 +71,30 @@
 <div class="mdl-layout mdl-js-layout">
     <div id="drawer" class="mdl-layout__drawer">
         <nav class="mdl-navigation">
+            <div id="image-panel" class="slideout-body noselect">
+                <span lang="en" class="mdl-layout-title">Custom Image</span>
+                <span lang="es" class="mdl-layout-title">Imagen personalizada</span>
+                <p lang="en">Upload your image.</p>
+                <p lang="es">Sube tu imagen.</p>
+                <div class="insert-button-set">
+                    <div class="insert-button">
+                        <input id="toolbar-image-input" type="file" class="noshow">
+                        <label for="toolbar-image-input" id="file-picker-label"
+                               class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored export-button">
+                            <span lang="en">Insert Image</span>
+                            <span lang="es">Insertar Imagen</span>
+                        </label>
+                    </div>
+                </div><!-- /insert-button-set -->
+            </div><!-- /image-panel -->
+
+
+
             <div id="artwork-panel" class="slideout-body noselect">
-                <span class="mdl-layout-title">Artwork</span>
+                <span lang="en" class="mdl-layout-title">Artwork</span>
+                <span lang="es" class="mdl-layout-title">Artwork</span>
+                <p lang="en">Select your flag or logo to add it to your design.</p>
+                <p lang="es">Selecciona tu bandera o logo para agregarlo a tu diseño.</p>
                 <form id="artwork-search-form" name="artwork-search-form" autocomplete="off">
                     <div id="left">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -217,12 +249,12 @@
                     <span lang="es">Insertar Texto</span>
                 </div>
 
-                <div id="toolbar-image" class="toolbar-item"></div>
-                <input id="toolbar-image-input" type="file" style="display:none;">
-                <div class="mdl-tooltip mdl-tooltip--large noselect" for="toolbar-image">
-                    <span lang="en">Insert Image</span>
-                    <span lang="es">Insertar Imagen</span>
-                </div>
+<!--                <div id="toolbar-image" class="toolbar-item"></div>-->
+<!--                <input id="toolbar-image-input" type="file" style="display:none;">-->
+<!--                <div class="mdl-tooltip mdl-tooltip&#45;&#45;large noselect" for="toolbar-image">-->
+<!--                    <span lang="en">Insert Image</span>-->
+<!--                    <span lang="es">Insertar Imagen</span>-->
+<!--                </div>-->
 
                 <div id="toolbar-shape" class="toolbar-item toolbar-dropdown">
                     <div class="toolbar-arrow"></div>
