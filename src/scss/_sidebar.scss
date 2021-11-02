@@ -153,6 +153,20 @@
   color: #383838;
 }
 
+/* --- Insert Image Panel --- */
+
+.insert-button {
+  max-width: 250px;
+  //margin-bottom: 20px;
+  background-color: #d1d1f4;
+}
+
+.insert-button-set {
+  text-align: center;
+  margin-top: -5px;
+  margin-left: -5px;
+}
+
 /* --- Export Panel --- */
 
 .export-options {
@@ -161,7 +175,7 @@
 }
 
 .export-button {
-  width: 150px;
+  max-width: 250px;
   margin-bottom: 20px;
   background-color: #d1d1f4;
 }
@@ -180,11 +194,11 @@
 
 .export-import-buttons {
   display: inline-block;
-  padding: 5px;
+  //padding: 5px;
 }
 
 #file-picker-label {
-  padding:0px;
+  padding:0px 16px;
 }
 
 #uploading-placeholder {
