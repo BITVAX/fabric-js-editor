@@ -546,8 +546,7 @@ function listeners() {
             function (url) {
                 utils.insertSvg(url, $("#loading-spinner"));
                 page.closePanel(null, true);
-            },
-            $("input[name=search-type]:checked").val());
+            });
     });
 
     $("#search-submit").on("click", function () {

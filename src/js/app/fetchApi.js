@@ -27,35 +27,13 @@ function get_search(categories,search) {
           category.products.filter(function (x){
             return x.names.toLowerCase().indexOf(search.toLowerCase()) !== -1})
               .map(function (x) {
-                x.category = {'name': category.name, 'id': category.id};
-                return x;
-          })
+                    x.category = {'name': category.name, 'id': category.id};
+                    return x })
       );
     if (Object.keys(category.categories).length > 0) res = [].concat(res, get_search(category.categories,search));
   }
   return res;
 };
-
-function prepare_payload(response,search) {
-  var icons = get_search(response, search);
-  // var totalResults = icons.length;
-  // var payload = [];
-  // for (var i = 0; i < totalResults; i++) {
-  //   var thisId = icons[i]['id'];
-  //   // var folder = parseInt(thisId/1000);
-  //   payload.push({
-  //     id: thisId,
-  //     title: icons[i]['name'],
-  //     uploader: icons[i]['category']['name'],
-  //     uploader_url: icons[i][3],
-  //     svg: {
-  //       url: icons[i]['image'].replace(".jpg", ".svg"),
-  //       png_thumb: icons[i]['thumbnail']
-  //     }
-  //   });
-  // }
-  return icons;
-}
 
 function getBitvaxData(prepareCallback){
   var endpoint = config.icons.host+"/"+global.store+"/artwork";
@@ -79,10 +57,10 @@ function getBitvaxData(prepareCallback){
 
 }
 
-function queryBitvaxApi(page, numResults, callback) {
+function queryBitvaxApi(page, numResults, callback ) {
   if (cachedResults === null) {
     getBitvaxData(function (response){
-      cachedResults = prepare_payload(response,keyword);
+      cachedResults = get_search(keyword===""?[response[0]]:response, keyword);
       var thisPage = cachedResults.slice(0, numResults);
       callback(thisPage, thisPage.length, Math.ceil(cachedResults.length / numResults), page);
     });
@@ -189,7 +167,11 @@ function parseResults(results, _numResults, _numPages, _currentPage) {
   }
 }
 
-function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _actionHandler, _clipart) {
+function getPageSize() {
+  return Math.ceil((window.innerHeight - 50) / 35) * 4;
+}
+
+function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _actionHandler) {
   keyword = _keyword.trim();
   if (keyword === "") {
     return;
@@ -216,7 +198,37 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
 
   // Query API
   toggleSpinner(true);
-  pageSize = Math.ceil((window.innerHeight - 50) / 35) * 4;
+  pageSize = getPageSize();
+  queryBitvaxApi(1, pageSize, parseResults);
+}
+
+function load(_toggleSpinner, _toggleNoResults, _resultsDiv, _actionHandler) {
+  if (cachedResults!=null){
+    return;
+  }
+  keyword = '';
+  // Cancel all outstanding queries
+  cancelOutstandingQueries();
+  outstandingQueries.length = 0;
+
+  // callbacks
+  toggleSpinner = _toggleSpinner;
+  toggleNoResults = _toggleNoResults;
+  resultsDiv = _resultsDiv;
+  actionHandler = _actionHandler;
+
+  // Clear search results
+  resultsDiv.off("scroll.scrollHandler");
+  resultsDiv.children(".preview-image").remove();
+  cachedResults=null;
+
+  // Reset
+  loading = false;
+  urls = {};
+
+  // Query API
+  toggleSpinner(true);
+  pageSize = getPageSize();
   queryBitvaxApi(1, pageSize, parseResults);
 }
 
@@ -225,8 +237,16 @@ function search(_keyword, _toggleSpinner, _toggleNoResults, _resultsDiv, _action
 function FetchApiModule() {
   if (!(this instanceof FetchApiModule)) return new FetchApiModule();
   getBitvaxData(function (response){});
+  // getBitvaxData(function (response){
+  //   cachedResults = get_search([response[0]], '');
+  //   var nResults=getPageSize();
+  //   var thisPage = cachedResults.slice(0, nResults);
+  //   parseResults(thisPage, thisPage.length, Math.ceil(cachedResults.length / nResults), 1);
+  // });
+
 }
 
 FetchApiModule.prototype.search = search;
+FetchApiModule.prototype.load = load;
 
 module.exports = FetchApiModule;
